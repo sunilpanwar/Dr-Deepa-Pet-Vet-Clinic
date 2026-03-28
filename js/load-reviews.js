@@ -7,7 +7,7 @@ class ReviewsLoader {
         //this.jsonUrl = 'data/reviews.json';
         
         // Option 2: GitHub raw URL (works without local server!)
-        this.jsonUrl ='https://gist.githubusercontent.com/sunilpanwar/215ab7f9c7a11a8bd14028cab010b474/raw/477fb82a1e6f0f0462224b5be265e7b444dbf20f/reviews.json';
+        this.jsonUrl ='https://gist.githubusercontent.com/sunilpanwar/215ab7f9c7a11a8bd14028cab010b474/raw/60ce26465bea5ad9e1bc3d0fefb72dd6ba962bbd/reviews.json';
         // Option 3: Google Drive public link (convert to direct download link)
         // this.jsonUrl = 'https://drive.google.com/uc?export=download&id=YOUR_FILE_ID';
         
