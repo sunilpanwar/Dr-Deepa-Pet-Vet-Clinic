@@ -1185,7 +1185,7 @@ function showBreedInfo() {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             padding: 1rem;
             margin: 0;
-            overflow: hidden;
+            min-height: 100vh;
         }
         .container {
             max-width: 700px;
@@ -1194,7 +1194,6 @@ function showBreedInfo() {
             border-radius: 15px;
             overflow: hidden;
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            max-height: 95vh;
             display: flex;
             flex-direction: column;
         }
@@ -1219,14 +1218,13 @@ function showBreedInfo() {
         }
         .breed-image {
             width: 100%;
-            height: 200px;
+            height: 250px;
             object-fit: contain;
             background: #f5f7fa;
             flex-shrink: 0;
         }
         .breed-content {
             padding: 1rem;
-            overflow-y: auto;
             flex: 1;
         }
         .breed-content::-webkit-scrollbar {
@@ -1305,7 +1303,8 @@ function showBreedInfo() {
             transition: max-height 0.3s ease;
         }
         .section-content.active {
-            max-height: 500px;
+            max-height: 1000px;
+            overflow-y: auto;
         }
         .section-inner {
             padding: 0.75rem;
@@ -1460,6 +1459,14 @@ function showBreedInfo() {
                 content.classList.add('active');
             }
         }
+        
+        // Open first section by default
+        window.addEventListener('load', function() {
+            const firstSection = document.querySelector('.section-header');
+            if (firstSection) {
+                firstSection.click();
+            }
+        });
     </script>
 </body>
 </html>
