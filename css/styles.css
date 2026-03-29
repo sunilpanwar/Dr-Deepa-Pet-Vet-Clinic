@@ -158,6 +158,22 @@ ul {
     text-shadow: none;
 }
 
+/* Secondary button on light backgrounds */
+.quiz-result .btn-secondary,
+.section:not(.hero) .btn-secondary {
+    background: var(--secondary-color);
+    color: var(--white);
+    border-color: var(--secondary-color);
+    text-shadow: none;
+}
+
+.quiz-result .btn-secondary:hover,
+.section:not(.hero) .btn-secondary:hover {
+    background: var(--primary-color);
+    color: var(--white);
+    border-color: var(--primary-color);
+}
+
 .btn-block {
     width: 100%;
 }
@@ -2002,14 +2018,25 @@ ul {
     .hero {
         min-height: 80vh;
         background-attachment: scroll;
+        padding-top: 100px;
+        background-size: contain !important;
+        background-position: center top 100px !important;
+    }
+    
+    .hero-content {
+        padding-top: 2rem;
     }
     
     .hero-title {
         font-size: 2rem;
+        word-wrap: break-word;
     }
     
     .title-small {
         font-size: 1.125rem;
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
     }
     
     .hero-subtitle {
