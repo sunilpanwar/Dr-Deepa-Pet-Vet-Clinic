@@ -47,6 +47,20 @@ jobs:
         echo "=== Config file after replacement (first 35 lines) ==="
         head -n 35 js/config.js
     
+    - name: Verify files before deployment
+      run: |
+        echo "=== Checking config.js before deployment ==="
+        echo "First 35 lines of js/config.js:"
+        head -n 35 js/config.js
+        echo ""
+        echo "=== Checking if placeholders still exist ==="
+        if grep -q "YOUR_QUOTES_JSON_URL_HERE" js/config.js; then
+          echo "❌ ERROR: Placeholder still found in config.js!"
+          exit 1
+        else
+          echo "✅ No placeholders found - file is ready for deployment"
+        fi
+    
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
       with:
