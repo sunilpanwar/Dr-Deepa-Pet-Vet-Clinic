@@ -2,6 +2,11 @@
 // Share Story Modal Functionality
 // ===================================
 
+// Google Apps Script Web App URL
+// IMPORTANT: Replace this with your actual Google Apps Script Web App URL
+// See GOOGLE_APPS_SCRIPT_SETUP.md for instructions
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwvjw5yxcFgGk1h3g8aCwm3w24WdJROcU8qkHlZCbLho1C6zFNv8r6S1SazRlCS4KdJFw/exec';
+
 const modal = document.getElementById('shareStoryModal');
 const shareStoryForm = document.getElementById('shareStoryForm');
 const closeModalBtn = document.getElementById('closeModal');
@@ -135,7 +140,7 @@ document.addEventListener('keydown', (e) => {
 // ===================================
 // Form Validation and Submission
 // ===================================
-shareStoryForm.addEventListener('submit', (e) => {
+shareStoryForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     
     // Validate story length
@@ -152,12 +157,22 @@ shareStoryForm.addEventListener('submit', (e) => {
     }
     
     // Handle "Other" breed
+    let finalBreed = petBreedSelect.value;
     if (petBreedSelect.value === 'other' && otherBreedInput.value) {
-        petBreedSelect.value = otherBreedInput.value;
+        finalBreed = otherBreedInput.value;
     }
     
-    // Get owner name for success message
-    const ownerName = document.getElementById('ownerName').value;
+    // Get form data
+    const formData = {
+        petName: document.getElementById('petName').value,
+        petType: document.getElementById('petType').value,
+        petBreed: finalBreed,
+        ownerName: document.getElementById('ownerName').value,
+        storyTitle: document.getElementById('storyTitle').value,
+        storyText: storyContent,
+        email: document.getElementById('email').value,
+        photoUrl: document.getElementById('photoUrl').value || ''
+    };
     
     // Show loading state
     const submitBtn = shareStoryForm.querySelector('button[type="submit"]');
@@ -165,13 +180,36 @@ shareStoryForm.addEventListener('submit', (e) => {
     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
     submitBtn.disabled = true;
     
-    // Submit form directly (FormSubmit will handle it)
-    shareStoryForm.submit();
-    
-    // Show success message immediately
-    setTimeout(() => {
-        showSuccessConfirmation(ownerName);
-    }, 500);
+    try {
+        // Check if Google Script URL is configured
+        if (GOOGLE_SCRIPT_URL === 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE') {
+            throw new Error('Google Apps Script URL not configured. Please see GOOGLE_APPS_SCRIPT_SETUP.md');
+        }
+        
+        // Submit to Google Apps Script
+        const response = await fetch(GOOGLE_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors', // Required for Google Apps Script
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData)
+        });
+        
+        // Note: With no-cors mode, we can't read the response
+        // But if we get here without error, the submission likely succeeded
+        showSuccessConfirmation(formData.ownerName);
+        
+    } catch (error) {
+        console.error('Submission error:', error);
+        
+        // Reset button
+        submitBtn.innerHTML = originalBtnText;
+        submitBtn.disabled = false;
+        
+        // Show error message
+        alert('Sorry, there was an error submitting your story. Please try again or contact us directly.');
+    }
 });
 
 // ===================================
