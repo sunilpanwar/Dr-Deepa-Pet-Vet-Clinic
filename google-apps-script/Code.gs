@@ -54,9 +54,14 @@ function setup() {
     'Status',
     'Pet Name',
     'Pet Type',
+    'Pet Breed',
+    'Pet Age',
     'Owner Name',
     'Story Title',
+    'Story Category',
     'Story Text',
+    'Treatment Date',
+    'Outcome',
     'Email',
     'Photo URL',
     'IP Address',
@@ -79,9 +84,14 @@ function setup() {
     'ID',
     'Pet Name',
     'Pet Type',
+    'Pet Breed',
+    'Pet Age',
     'Owner Name',
     'Story Title',
+    'Story Category',
     'Story Text',
+    'Treatment Date',
+    'Outcome',
     'Photo URL',
     'Date Approved'
   ];
@@ -322,12 +332,12 @@ function getSubmissionCounts(ipAddress, email) {
   let emailCount = 0;
   
   if (lastRow > 1) {
-    const data = submissionsSheet.getRange(2, 1, lastRow - 1, 11).getValues();
+    const data = submissionsSheet.getRange(2, 1, lastRow - 1, 18).getValues();
     
     for (let i = 0; i < data.length; i++) {
       const row = data[i];
-      if (row[9] === ipAddress) ipCount++; // IP is column 10
-      if (row[7] === email) emailCount++; // Email is column 8
+      if (row[14] === ipAddress) ipCount++; // IP is column 15
+      if (row[12] === email) emailCount++; // Email is column 13
     }
   }
   
@@ -396,9 +406,14 @@ function doPost(e) {
       'Pending',  // Status
       data.petName || '',
       data.petType || '',
+      data.petBreed || '',
+      data.petAge || '',
       data.ownerName || '',
       data.storyTitle || '',
+      data.storyCategory || '',
       data.storyText || '',
+      data.treatmentDate || '',
+      data.outcome || '',
       email,
       data.photoUrl || '',
       ipAddress,
@@ -470,7 +485,7 @@ function approveStory(rowNumber) {
   }
   
   // Get the story data from submissions sheet
-  const storyData = submissionsSheet.getRange(rowNumber, 1, 1, 11).getValues()[0];
+  const storyData = submissionsSheet.getRange(rowNumber, 1, 1, 18).getValues()[0];
   
   // Update status to "Approved" in submissions sheet
   submissionsSheet.getRange(rowNumber, 2).setValue('Approved');
@@ -484,10 +499,15 @@ function approveStory(rowNumber) {
     nextId,                    // ID
     storyData[2],              // Pet Name
     storyData[3],              // Pet Type
-    storyData[4],              // Owner Name
-    storyData[5],              // Story Title
-    storyData[6],              // Story Text
-    storyData[8],              // Photo URL
+    storyData[4],              // Pet Breed
+    storyData[5],              // Pet Age
+    storyData[6],              // Owner Name
+    storyData[7],              // Story Title
+    storyData[8],              // Story Category
+    storyData[9],              // Story Text
+    storyData[10],             // Treatment Date
+    storyData[11],             // Outcome
+    storyData[13],             // Photo URL
     new Date()                 // Date Approved
   ];
   
@@ -536,18 +556,23 @@ function exportApprovedStoriesToJSON() {
   }
   
   // Get all approved stories (skip header row)
-  const data = approvedSheet.getRange(2, 1, lastRow - 1, 8).getValues();
+  const data = approvedSheet.getRange(2, 1, lastRow - 1, 13).getValues();
   
   // Convert to JSON format
   const stories = data.map(row => ({
     id: row[0],
     petName: row[1],
     petType: row[2].toLowerCase(),
-    ownerName: row[3],
-    title: row[4],
-    story: row[5],
-    image: row[6] || 'images/quiz/dog/golden-retriever.jpg',
-    date: Utilities.formatDate(row[7], Session.getScriptTimeZone(), 'yyyy-MM-dd')
+    breed: row[3],
+    age: row[4],
+    ownerName: row[5],
+    title: row[6],
+    category: row[7],
+    story: row[8],
+    treatmentDate: row[9] ? Utilities.formatDate(row[9], Session.getScriptTimeZone(), 'yyyy-MM-dd') : '',
+    outcome: row[10],
+    image: row[11] || 'images/quiz/dog/golden-retriever.jpg',
+    date: Utilities.formatDate(row[12], Session.getScriptTimeZone(), 'yyyy-MM-dd')
   }));
   
   // Create formatted JSON
@@ -624,6 +649,16 @@ function sendNotificationEmail(data, ipAddress, counts) {
             </div>
             
             <div class="field">
+              <div class="label">🐾 Pet Breed:</div>
+              <div class="value">${data.petBreed || 'Not provided'}</div>
+            </div>
+            
+            <div class="field">
+              <div class="label">📅 Pet Age:</div>
+              <div class="value">${data.petAge || 'Not provided'}</div>
+            </div>
+            
+            <div class="field">
               <div class="label">👤 Owner Name:</div>
               <div class="value">${data.ownerName || 'Not provided'}</div>
             </div>
@@ -639,8 +674,23 @@ function sendNotificationEmail(data, ipAddress, counts) {
             </div>
             
             <div class="field">
+              <div class="label">🏷️ Category:</div>
+              <div class="value">${data.storyCategory || 'Not provided'}</div>
+            </div>
+            
+            <div class="field">
               <div class="label">📖 Story:</div>
               <div class="value story">${data.storyText || 'Not provided'}</div>
+            </div>
+            
+            <div class="field">
+              <div class="label">🏥 Treatment Date:</div>
+              <div class="value">${data.treatmentDate || 'Not provided'}</div>
+            </div>
+            
+            <div class="field">
+              <div class="label">✅ Outcome:</div>
+              <div class="value">${data.outcome || 'Not provided'}</div>
             </div>
             
             ${data.photoUrl ? `
@@ -683,14 +733,20 @@ Pet Details:
 ------------
 Pet Name: ${data.petName || 'Not provided'}
 Pet Type: ${data.petType || 'Not provided'}
+Pet Breed: ${data.petBreed || 'Not provided'}
+Pet Age: ${data.petAge || 'Not provided'}
 Owner Name: ${data.ownerName || 'Not provided'}
 Email: ${data.email || 'Not provided'}
 
 Story:
 ------
 Title: ${data.storyTitle || 'Not provided'}
+Category: ${data.storyCategory || 'Not provided'}
 
 ${data.storyText || 'Not provided'}
+
+Treatment Date: ${data.treatmentDate || 'Not provided'}
+Outcome: ${data.outcome || 'Not provided'}
 
 ${data.photoUrl ? 'Photo URL: ' + data.photoUrl : ''}
 

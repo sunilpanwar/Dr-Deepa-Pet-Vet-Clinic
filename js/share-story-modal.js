@@ -7,6 +7,26 @@
 const GOOGLE_SCRIPT_URL = window.CONFIG?.GOOGLE_SCRIPT_URL || 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE';
 const RECAPTCHA_SITE_KEY = window.CONFIG?.RECAPTCHA_SITE_KEY || '';
 const ENABLE_RECAPTCHA = window.CONFIG?.ENABLE_RECAPTCHA || false;
+const DEBUG_MODE = window.CONFIG?.DEBUG_MODE || false;
+
+// Debug logger - only logs when DEBUG_MODE is true
+const debugLog = (...args) => {
+    if (DEBUG_MODE) {
+        console.log(...args);
+    }
+};
+
+const debugWarn = (...args) => {
+    if (DEBUG_MODE) {
+        console.warn(...args);
+    }
+};
+
+const debugError = (...args) => {
+    if (DEBUG_MODE) {
+        console.error(...args);
+    }
+};
 
 const modal = document.getElementById('shareStoryModal');
 const shareStoryForm = document.getElementById('shareStoryForm');
@@ -159,7 +179,7 @@ if (shareStoryForm) {
     // Validate story length
     const storyContentField = document.getElementById('storyContent');
     if (!storyContentField) {
-        console.error('Story content field not found');
+        debugError('Story content field not found');
         return;
     }
     
@@ -200,13 +220,13 @@ if (shareStoryForm) {
             try {
                 // Check if grecaptcha is loaded
                 if (typeof grecaptcha === 'undefined') {
-                    console.warn('reCAPTCHA not loaded. Submitting without token.');
+                    debugWarn('reCAPTCHA not loaded. Submitting without token.');
                 } else {
                     recaptchaToken = await grecaptcha.execute(RECAPTCHA_SITE_KEY, {action: 'submit_story'});
-                    console.log('reCAPTCHA token obtained');
+                    debugLog('reCAPTCHA token obtained');
                 }
             } catch (recaptchaError) {
-                console.error('reCAPTCHA error:', recaptchaError);
+                debugError('reCAPTCHA error:', recaptchaError);
                 // Continue without token - server will handle it
             }
         }
@@ -252,7 +272,7 @@ if (shareStoryForm) {
         showSuccessConfirmation(formData.ownerName);
         
     } catch (error) {
-        console.error('Submission error:', error);
+        debugError('Submission error:', error);
         
         // Reset button
         submitBtn.innerHTML = originalBtnText;
@@ -375,4 +395,4 @@ if (shareStoryForm) {
 // Initialize character counter on page load
 initializeCharCounter();
 
-console.log('%c📝 Share Story Modal Ready', 'color: #4A90E2; font-size: 14px; font-weight: bold;');
+debugLog('%c📝 Share Story Modal Ready', 'color: #4A90E2; font-size: 14px; font-weight: bold;');

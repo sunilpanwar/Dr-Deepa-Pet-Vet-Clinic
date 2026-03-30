@@ -28,7 +28,12 @@ const CONFIG = {
     QUOTES_JSON_URL: 'YOUR_QUOTES_JSON_URL_HERE',
     REVIEWS_JSON_URL: 'YOUR_REVIEWS_JSON_URL_HERE',
     STORIES_JSON_URL: 'YOUR_STORIES_JSON_URL_HERE',
-    ARTICLES_JSON_URL: 'YOUR_ARTICLES_JSON_URL_HERE'
+    ARTICLES_JSON_URL: 'YOUR_ARTICLES_JSON_URL_HERE',
+    
+    // Debug Mode
+    // Set to false in production to disable console logs
+    // Set to true during development to see debug information
+    DEBUG_MODE: false
 };
 
 // Make CONFIG available globally
