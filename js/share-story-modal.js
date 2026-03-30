@@ -114,7 +114,6 @@ function closeModal() {
     modal.style.display = 'none';
     document.body.style.overflow = '';
     shareStoryForm.reset();
-    imagePreview.style.display = 'none';
     otherBreedGroup.style.display = 'none';
     petBreedSelect.disabled = true;
     petBreedSelect.innerHTML = '<option value="">Select breed</option>';
@@ -193,6 +192,7 @@ shareStoryForm.addEventListener('submit', async (e) => {
         }
         
         // Get form data
+        const photoUrlField = document.getElementById('photoUrl');
         const formData = {
             petName: document.getElementById('petName').value,
             petType: document.getElementById('petType').value,
@@ -201,7 +201,7 @@ shareStoryForm.addEventListener('submit', async (e) => {
             storyTitle: document.getElementById('storyTitle').value,
             storyText: storyContent,
             email: document.getElementById('email').value,
-            photoUrl: document.getElementById('photoUrl').value || '',
+            photoUrl: photoUrlField ? photoUrlField.value : '',
             recaptchaToken: recaptchaToken  // Include token (empty string if disabled)
         };
         
@@ -278,7 +278,6 @@ function showSuccessConfirmation(name) {
         const newCancelBtn = document.getElementById('cancelBtn');
         newCancelBtn.addEventListener('click', closeModal);
         shareStoryForm.reset();
-        imagePreview.style.display = 'none';
         otherBreedGroup.style.display = 'none';
         petBreedSelect.disabled = true;
         petBreedSelect.innerHTML = '<option value="">Select breed</option>';

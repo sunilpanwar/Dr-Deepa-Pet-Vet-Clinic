@@ -27,7 +27,7 @@ const CONFIG = {
     // These can be local files (requires server) or hosted URLs (GitHub Gist, Google Drive, etc.)
     QUOTES_JSON_URL: 'https://gist.githubusercontent.com/sunilpanwar/606de5450c58d75a0415e220f510e0b5/raw/b79a7dfca9a511ed41694a61c280569c7d37856c/quotes.json',
     REVIEWS_JSON_URL: 'https://gist.githubusercontent.com/sunilpanwar/215ab7f9c7a11a8bd14028cab010b474/raw/60ce26465bea5ad9e1bc3d0fefb72dd6ba962bbd/reviews.json',
-    STORIES_JSON_URL: 'https://gist.githubusercontent.com/sunilpanwar/3ab0d4f0c33a9d15450c1712f21c24d8/raw/21f181a2fe961fc0bda29f6795057fa9cdfe6391/stories.json',
+    STORIES_JSON_URL: 'https://gist.githubusercontent.com/sunilpanwar/3ab0d4f0c33a9d15450c1712f21c24d8/raw/484262f7f0a33a3daea1825f1486b77fd119b483/stories.json',
     ARTICLES_JSON_URL: 'https://gist.githubusercontent.com/sunilpanwar/fa4e354dc34faf45136f9eed89d07c7c/raw/d3f24571647fdf34dfd2a05960579a667f6cce42/articles.json'
 };
 
