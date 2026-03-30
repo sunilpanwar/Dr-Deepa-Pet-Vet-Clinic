@@ -157,21 +157,28 @@ if (shareStoryForm) {
     e.preventDefault();
     
     // Validate story length
-    const storyContent = document.getElementById('storyContent').value;
+    const storyContentField = document.getElementById('storyContent');
+    if (!storyContentField) {
+        console.error('Story content field not found');
+        return;
+    }
+    
+    const storyContent = storyContentField.value;
     if (storyContent.length < 100) {
         alert('Please write at least 100 characters for your story.');
         return;
     }
     
     // Validate consent
-    if (!document.getElementById('consent').checked) {
+    const consentField = document.getElementById('consent');
+    if (!consentField || !consentField.checked) {
         alert('Please agree to the consent terms.');
         return;
     }
     
     // Handle "Other" breed
-    let finalBreed = petBreedSelect.value;
-    if (petBreedSelect.value === 'other' && otherBreedInput.value) {
+    let finalBreed = petBreedSelect ? petBreedSelect.value : '';
+    if (petBreedSelect && petBreedSelect.value === 'other' && otherBreedInput && otherBreedInput.value) {
         finalBreed = otherBreedInput.value;
     }
     
@@ -204,23 +211,29 @@ if (shareStoryForm) {
             }
         }
         
-        // Get form data with null checks
+        // Get form data with null checks - using actual HTML field IDs
         const petNameField = document.getElementById('petName');
         const petTypeField = document.getElementById('petType');
         const ownerNameField = document.getElementById('ownerName');
         const storyTitleField = document.getElementById('storyTitle');
-        const emailField = document.getElementById('email');
-        const photoUrlField = document.getElementById('photoUrl');
+        const emailField = document.getElementById('ownerEmail'); // Correct ID from HTML
+        const storyCategoryField = document.getElementById('storyCategory');
+        const petAgeField = document.getElementById('petAge');
+        const treatmentDateField = document.getElementById('treatmentDate');
+        const outcomeField = document.getElementById('outcome');
         
         const formData = {
             petName: petNameField ? petNameField.value : '',
             petType: petTypeField ? petTypeField.value : '',
             petBreed: finalBreed,
+            petAge: petAgeField ? petAgeField.value : '',
             ownerName: ownerNameField ? ownerNameField.value : '',
             storyTitle: storyTitleField ? storyTitleField.value : '',
+            storyCategory: storyCategoryField ? storyCategoryField.value : '',
             storyText: storyContent,
+            treatmentDate: treatmentDateField ? treatmentDateField.value : '',
+            outcome: outcomeField ? outcomeField.value : '',
             email: emailField ? emailField.value : '',
-            photoUrl: photoUrlField ? photoUrlField.value : '',
             recaptchaToken: recaptchaToken  // Include token (empty string if disabled)
         };
         
