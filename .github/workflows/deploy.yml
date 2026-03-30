@@ -15,6 +15,21 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
     
+    - name: Debug - Check if secrets have values
+      run: |
+        echo "Checking if secrets are set (showing length, not actual values):"
+        echo "QUOTES_JSON_URL length: ${#QUOTES_URL}"
+        echo "REVIEWS_JSON_URL length: ${#REVIEWS_URL}"
+        echo "STORIES_JSON_URL length: ${#STORIES_URL}"
+        echo "ARTICLES_JSON_URL length: ${#ARTICLES_URL}"
+        echo "GOOGLE_SCRIPT_URL length: ${#GOOGLE_URL}"
+      env:
+        QUOTES_URL: ${{ secrets.QUOTES_JSON_URL }}
+        REVIEWS_URL: ${{ secrets.REVIEWS_JSON_URL }}
+        STORIES_URL: ${{ secrets.STORIES_JSON_URL }}
+        ARTICLES_URL: ${{ secrets.ARTICLES_JSON_URL }}
+        GOOGLE_URL: ${{ secrets.GOOGLE_SCRIPT_URL }}
+    
     - name: Replace configuration values
       run: |
         # Replace placeholders in config.js with actual values from secrets
@@ -27,6 +42,10 @@ jobs:
         sed -i "s|YOUR_REVIEWS_JSON_URL_HERE|${{ secrets.REVIEWS_JSON_URL }}|g" js/config.js
         sed -i "s|YOUR_STORIES_JSON_URL_HERE|${{ secrets.STORIES_JSON_URL }}|g" js/config.js
         sed -i "s|YOUR_ARTICLES_JSON_URL_HERE|${{ secrets.ARTICLES_JSON_URL }}|g" js/config.js
+        
+        # Show what the file looks like after replacement (first 35 lines)
+        echo "=== Config file after replacement (first 35 lines) ==="
+        head -n 35 js/config.js
     
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
