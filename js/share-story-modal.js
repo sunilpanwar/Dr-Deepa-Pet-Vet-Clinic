@@ -204,16 +204,22 @@ if (shareStoryForm) {
             }
         }
         
-        // Get form data
+        // Get form data with null checks
+        const petNameField = document.getElementById('petName');
+        const petTypeField = document.getElementById('petType');
+        const ownerNameField = document.getElementById('ownerName');
+        const storyTitleField = document.getElementById('storyTitle');
+        const emailField = document.getElementById('email');
         const photoUrlField = document.getElementById('photoUrl');
+        
         const formData = {
-            petName: document.getElementById('petName').value,
-            petType: document.getElementById('petType').value,
+            petName: petNameField ? petNameField.value : '',
+            petType: petTypeField ? petTypeField.value : '',
             petBreed: finalBreed,
-            ownerName: document.getElementById('ownerName').value,
-            storyTitle: document.getElementById('storyTitle').value,
+            ownerName: ownerNameField ? ownerNameField.value : '',
+            storyTitle: storyTitleField ? storyTitleField.value : '',
             storyText: storyContent,
-            email: document.getElementById('email').value,
+            email: emailField ? emailField.value : '',
             photoUrl: photoUrlField ? photoUrlField.value : '',
             recaptchaToken: recaptchaToken  // Include token (empty string if disabled)
         };
