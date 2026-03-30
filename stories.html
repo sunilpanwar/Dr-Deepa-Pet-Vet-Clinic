@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Success Stories from Dr. Deepa Pet Vet Clinic - Read heartwarming tales of recovery, rescue, and care for cats and dogs.">
+    <meta name="keywords" content="pet success stories, veterinary success, pet recovery, animal rescue, pet care stories">
+    <title>Success Stories - Dr. Deepa Pet Vet Clinic</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <script src="js/components-loader.js"></script>
+    <!-- Load config before share-story-modal -->
+    <script src="js/config.js"></script>
+    <style>
+        /* Stories Page Specific Styles */
+        .stories-page-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--white);
+            padding: 1.5rem 0 1.5rem;
+            text-align: center;
+            margin-top: 70px;
+        }
+        
+        .stories-page-header h1 {
+            font-family: var(--font-heading);
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stories-page-header p {
+            font-size: 1.125rem;
+            opacity: 0.95;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .stories-filters {
+            background: var(--light-color);
+            padding: 1.5rem 0;
+            position: sticky;
+            top: 70px;
+            z-index: 100;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .filter-toggle {
+            display: none;
+            width: 100%;
+            padding: 0.75rem 1.5rem;
+            background: var(--primary-color);
+            color: var(--white);
+            border: none;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .filter-container {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .filter-btn {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid var(--primary-color);
+            background: var(--white);
+            color: var(--primary-color);
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition-normal);
+        }
+        
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: var(--primary-color);
+            color: var(--white);
+        }
+        
+        .search-box {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid var(--light-gray);
+            border-radius: var(--radius-lg);
+            font-size: 1rem;
+            width: 300px;
+            max-width: 100%;
+        }
+        
+        .search-box:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+        
+        .share-story-btn-top {
+            white-space: nowrap;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .share-story-btn-top i {
+            font-size: 1.125rem;
+        }
+        
+        .stories-main {
+            padding: 2rem 0;
+            background: var(--white);
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: var(--spacing-xl);
+            flex-wrap: wrap;
+            padding: 1rem 0;
+        }
+        
+        #pageNumbers {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .page-btn {
+            min-width: 40px;
+            height: 40px;
+            padding: 0 0.75rem;
+            border: 2px solid var(--primary-color);
+            background: var(--white);
+            color: var(--primary-color);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition-normal);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.95rem;
+        }
+        
+        .page-btn:hover:not(:disabled),
+        .page-btn.active {
+            background: var(--primary-color);
+            color: var(--white);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(74, 144, 226, 0.3);
+        }
+        
+        .page-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            border-color: var(--light-gray);
+            color: var(--gray);
+        }
+        
+        .page-btn:disabled:hover {
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .results-info {
+            text-align: center;
+            color: var(--gray);
+            margin-bottom: var(--spacing-md);
+            font-size: 1.125rem;
+        }
+        
+        .results-info strong {
+            color: var(--primary-color);
+        }
+        
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .modal-container {
+            background: var(--white);
+            border-radius: var(--radius-xl);
+            max-width: 800px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-xl);
+            animation: slideUp 0.3s ease;
+        }
+        
+        .modal-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--white);
+            padding: 2rem;
+            border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h2 {
+            font-family: var(--font-heading);
+            font-size: 1.75rem;
+            margin: 0;
+        }
+        
+        .modal-close {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: var(--white);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: var(--transition-normal);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+        
+        .modal-body {
+            padding: 2rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.875rem;
+            border: 2px solid var(--light-gray);
+            border-radius: var(--radius-md);
+            font-family: var(--font-primary);
+            font-size: 1rem;
+            transition: var(--transition-normal);
+            box-sizing: border-box;
+        }
+        
+        /* Standardize height for all inputs and selects */
+        .form-group input[type="text"],
+        .form-group input[type="email"],
+        .form-group input[type="date"],
+        .form-group input[type="file"],
+        .form-group select {
+            height: 48px;
+            line-height: normal;
+            display: flex;
+            align-items: center;
+        }
+        
+        /* Fix select text alignment */
+        .form-group select {
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+        
+        /* Select dropdown specific styling */
+        .form-group select {
+            padding-right: 2.5rem;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23333' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.875rem center;
+            background-size: 12px;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            cursor: pointer;
+        }
+        
+        /* Select option styling */
+        .form-group select option {
+            padding: 0.5rem;
+            font-size: 1rem;
+        }
+        
+        /* Textarea specific styling */
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+            line-height: 1.6;
+        }
+        
+        /* File input specific styling */
+        .form-group input[type="file"] {
+            padding: 0.625rem 0.875rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+        
+        .form-group small {
+            display: block;
+            margin-top: 0.5rem;
+            color: var(--gray);
+            font-size: 0.875rem;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--light-color);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .stories-page-header {
+                margin-top: 60px;
+                padding: 1rem 0;
+            }
+            
+            .stories-page-header h1 {
+                font-size: 2rem;
+            }
+            
+            .stories-filters {
+                position: sticky;
+                top: 60px;
+                padding: 0.75rem 0;
+            }
+            
+            .filter-toggle {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 0.5rem;
+            }
+            
+            .filter-container {
+                flex-direction: column;
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height 0.3s ease;
+            }
+            
+            .filter-container.active {
+                max-height: 800px;
+            }
+            
+            .search-box {
+                width: 100%;
+            }
+            
+            .stories-main {
+                padding-top: 1rem;
+            }
+            
+            .modal-container {
+                max-height: 95vh;
+            }
+            
+            .modal-header {
+                padding: 1.5rem;
+            }
+            
+            .modal-header h2 {
+                font-size: 1.25rem;
+            }
+            
+            .modal-body {
+                padding: 1.5rem;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-actions {
+                flex-direction: column;
+            }
+            
+            .form-actions button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header loads automatically from includes/header.html -->
+
+    <!-- Page Header -->
+    <section class="stories-page-header">
+        <div class="container">
+            <h1><i class="fas fa-heart"></i> Success Stories</h1>
+            <p>Every pet has a story, and we're honored to be part of their journey to health and happiness</p>
+        </div>
+    </section>
+
+    <!-- Filters -->
+    <section class="stories-filters">
+        <div class="container">
+            <button class="filter-toggle" id="filterToggle">
+                <i class="fas fa-filter"></i> <span>Show Filters</span>
+            </button>
+            <div class="filter-container" id="filterContainer">
+                <button class="filter-btn active" data-filter="all">
+                    <i class="fas fa-th"></i> All Stories
+                </button>
+                <button class="filter-btn" data-filter="recovery">
+                    <i class="fas fa-heartbeat"></i> Recovery
+                </button>
+                <button class="filter-btn" data-filter="rescue">
+                    <i class="fas fa-hand-holding-heart"></i> Rescue
+                </button>
+                <button class="filter-btn" data-filter="emergency">
+                    <i class="fas fa-ambulance"></i> Emergency
+                </button>
+                <button class="filter-btn" data-filter="long-term">
+                    <i class="fas fa-calendar-check"></i> Long-term Care
+                </button>
+                <button class="filter-btn" data-filter="surgery">
+                    <i class="fas fa-user-md"></i> Surgery
+                </button>
+                <input type="text" class="search-box" id="searchBox" placeholder="Search stories...">
+                <button class="btn btn-primary share-story-btn-top" id="shareStoryBtnTop">
+                    <i class="fas fa-plus-circle"></i> Share Your Story
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stories Grid -->
+    <section class="stories-main">
+        <div class="container">
+            <div class="results-info" id="resultsInfo">
+                Showing <strong id="showingCount">6</strong> of <strong id="totalCount">6</strong> stories
+            </div>
+            
+            <div class="stories-grid" id="storiesGrid">
+                <!-- Stories will be loaded dynamically from data/stories.json -->
+                <!-- Make sure you're running a local server (see START_SERVER.md) -->
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination" id="pagination">
+                <button class="page-btn" id="prevBtn" disabled>
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <div id="pageNumbers"></div>
+                <button class="page-btn" id="nextBtn">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+
+            <!-- Share Story CTA -->
+            <div class="share-story-cta" style="margin-top: 4rem;">
+                <h3>Have a Success Story to Share?</h3>
+                <p>We'd love to hear about your pet's journey with us!</p>
+                <a href="index.html#contact" class="btn btn-primary">Share Your Story</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer and Scroll to Top Button load automatically from includes/footer.html -->
+
+    <!-- Share Story Modal -->
+    <div id="shareStoryModal" class="modal-overlay" style="display: none;">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2><i class="fas fa-heart"></i> Share Your Success Story</h2>
+                <button class="modal-close" id="closeModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="shareStoryForm" action="https://formsubmit.co/panwarsunilsingh87@gmail.com" method="POST">
+                    <!-- FormSubmit Configuration -->
+                    <input type="hidden" name="_subject" value="New Success Story Submission">
+                    <input type="hidden" name="_captcha" value="false">
+                    <input type="hidden" name="_template" value="table">
+                    <input type="text" name="_honey" style="display:none">
+                    
+                    <!-- Story Category -->
+                    <div class="form-group">
+                        <label for="storyCategory">Story Category *</label>
+                        <select id="storyCategory" name="category" required>
+                            <option value="">Select a category</option>
+                            <option value="recovery">Recovery Story</option>
+                            <option value="rescue">Rescue Story</option>
+                            <option value="emergency">Emergency Save</option>
+                            <option value="long-term">Long-term Care</option>
+                            <option value="preventive">Preventive Care</option>
+                            <option value="surgery">Surgery Success</option>
+                        </select>
+                    </div>
+
+                    <!-- Pet Information -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="petName">Pet Name *</label>
+                            <input type="text" id="petName" name="petName" required placeholder="e.g., Max">
+                        </div>
+                        <div class="form-group">
+                            <label for="petType">Pet Type *</label>
+                            <select id="petType" name="petType" required>
+                                <option value="">Select type</option>
+                                <option value="dog">Dog</option>
+                                <option value="cat">Cat</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="petBreed">Breed *</label>
+                            <select id="petBreed" name="breed" required>
+                                <option value="">Select breed</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="petAge">Age *</label>
+                            <input type="text" id="petAge" name="age" required placeholder="e.g., 7 years old">
+                        </div>
+                    </div>
+
+                    <!-- Other Breed Input (hidden by default) -->
+                    <div class="form-group" id="otherBreedGroup" style="display: none;">
+                        <label for="otherBreed">Please specify breed *</label>
+                        <input type="text" id="otherBreed" name="otherBreed" placeholder="Enter breed name">
+                    </div>
+
+                    <!-- Owner Information -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="ownerName">Your Name *</label>
+                            <input type="text" id="ownerName" name="ownerName" required placeholder="Your full name">
+                        </div>
+                        <div class="form-group">
+                            <label for="ownerEmail">Your Email *</label>
+                            <input type="email" id="ownerEmail" name="email" required placeholder="your@email.com">
+                        </div>
+                    </div>
+
+                    <!-- Story Title -->
+                    <div class="form-group">
+                        <label for="storyTitle">Story Title *</label>
+                        <input type="text" id="storyTitle" name="title" required placeholder="e.g., Max's Miraculous Recovery">
+                    </div>
+
+                    <!-- Story Content -->
+                    <div class="form-group">
+                        <label for="storyContent">Your Story *</label>
+                        <textarea id="storyContent" name="story" rows="6" required placeholder="Tell us about your pet's journey with Dr. Deepa Pet Vet Clinic..."></textarea>
+                        <small>Minimum 100 characters</small>
+                    </div>
+
+                    <!-- Treatment Date -->
+                    <div class="form-group">
+                        <label for="treatmentDate">Treatment Date *</label>
+                        <input type="date" id="treatmentDate" name="date" required>
+                    </div>
+
+                    <!-- Outcome -->
+                    <div class="form-group">
+                        <label for="outcome">Outcome *</label>
+                        <input type="text" id="outcome" name="outcome" required placeholder="e.g., Fully Recovered, Adopted & Thriving">
+                    </div>
+
+                    <!-- Photo Instructions -->
+                    <div class="form-group">
+                        <label style="color: #4A90E2;">📸 Pet Photo</label>
+                        <div style="background: #E3F2FD; border-left: 4px solid #4A90E2; padding: 1rem; border-radius: 8px;">
+                            <p style="margin: 0; color: #2C3E50; line-height: 1.6;">
+                                <strong>Please email your pet's photo separately to:</strong><br>
+                                <a href="mailto:drdeepapetvetclinic@gmail.com" style="color: #4A90E2; text-decoration: none; font-weight: 600;">
+                                    drdeepapetvetclinic@gmail.com
+                                </a>
+                            </p>
+                            <p style="margin: 0.5rem 0 0 0; color: #7F8C8D; font-size: 0.9rem;">
+                                Include your pet's name in the email subject so we can match it with your story.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Consent -->
+                    <div class="form-group">
+                        <label style="display: flex; align-items: flex-start; gap: 0.75rem; cursor: pointer;">
+                            <input type="checkbox" id="consent" name="consent" required style="width: 20px; height: 20px; margin-top: 0.15rem; flex-shrink: 0; cursor: pointer;">
+                            <span style="flex: 1;">I consent to sharing this story on the Dr. Deepa Pet Vet Clinic website and understand that it may be edited for clarity. *</span>
+                        </label>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancelBtn" style="color: #2C3E50;">Cancel</button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i> Submit Story
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/script.js"></script>
+    <script src="js/load-stories.js"></script>
+    <script src="js/stories-page.js"></script>
+    <script src="js/share-story-modal.js"></script>
+    <script>
+        // Mobile filter toggle
+        const filterToggle = document.getElementById('filterToggle');
+        const filterContainer = document.getElementById('filterContainer');
+        
+        if (filterToggle) {
+            filterToggle.addEventListener('click', function() {
+                filterContainer.classList.toggle('active');
+                const isActive = filterContainer.classList.contains('active');
+                const toggleText = this.querySelector('span');
+                const toggleIcon = this.querySelector('i');
+                
+                if (isActive) {
+                    toggleText.textContent = 'Hide Filters';
+                    toggleIcon.className = 'fas fa-times';
+                } else {
+                    toggleText.textContent = 'Show Filters';
+                    toggleIcon.className = 'fas fa-filter';
+                }
+            });
+        }
+    </script>
+</body>
+</html>

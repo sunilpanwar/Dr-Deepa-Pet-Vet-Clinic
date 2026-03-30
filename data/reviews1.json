@@ -1,0 +1,38 @@
+[
+  {
+    "name": "Sunil Panwar",
+    "rating": 5,
+    "review": "Dr. Deepa is absolutely wonderful! She took such great care of my golden retriever Max. The clinic is clean, modern, and the staff is incredibly friendly. Highly recommend!",
+    "image": "https://ui-avatars.com/api/?name=Sarah+Johnson&background=4A90E2&color=fff"
+  },
+  {
+    "name": "Rajesh Kumar",
+    "rating": 5,
+    "review": "My cat Whiskers had a serious health issue and Dr. Deepa diagnosed and treated it perfectly. Her expertise and compassion made all the difference. Thank you!",
+    "image": "https://ui-avatars.com/api/?name=Rajesh+Kumar&background=E24A4A&color=fff"
+  },
+  {
+    "name": "Priya Sharma",
+    "rating": 5,
+    "review": "Best vet clinic in the area! Dr. Deepa is knowledgeable, patient, and truly cares about animals. The 24/7 emergency service saved my dog's life. Forever grateful!",
+    "image": "https://ui-avatars.com/api/?name=Priya+Sharma&background=4AE290&color=fff"
+  },
+  {
+    "name": "Michael Brown",
+    "rating": 4.5,
+    "review": "Professional service and state-of-the-art facilities. My Labrador loves coming here! Dr. Deepa explains everything clearly and the prices are very reasonable.",
+    "image": "https://ui-avatars.com/api/?name=Michael+Brown&background=E2A04A&color=fff"
+  },
+  {
+    "name": "Anita Desai",
+    "rating": 5,
+    "review": "I've been bringing my Persian cat here for 3 years. Dr. Deepa is gentle, thorough, and always available for questions. The best veterinary care we've experienced!",
+    "image": "https://ui-avatars.com/api/?name=Anita+Desai&background=A04AE2&color=fff"
+  },
+  {
+    "name": "David Lee",
+    "rating": 5,
+    "review": "Excellent clinic with caring staff. Dr. Deepa performed surgery on my Beagle and the recovery was smooth. They followed up regularly to ensure everything was fine.",
+    "image": "https://ui-avatars.com/api/?name=David+Lee&background=4AE2E2&color=fff"
+  }
+]
