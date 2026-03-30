@@ -19,6 +19,12 @@ jobs:
         sed -i "s|YOUR_GOOGLE_APPS_SCRIPT_URL_HERE|${{ secrets.GOOGLE_SCRIPT_URL }}|g" js/config.js
         sed -i "s|RECAPTCHA_SITE_KEY: ''|RECAPTCHA_SITE_KEY: '${{ secrets.RECAPTCHA_SITE_KEY }}'|g" js/config.js
         sed -i "s|ENABLE_RECAPTCHA: false|ENABLE_RECAPTCHA: true|g" js/config.js
+        
+        # Replace JSON data URLs
+        sed -i "s|YOUR_QUOTES_JSON_URL_HERE|${{ secrets.QUOTES_JSON_URL }}|g" js/config.js
+        sed -i "s|YOUR_REVIEWS_JSON_URL_HERE|${{ secrets.REVIEWS_JSON_URL }}|g" js/config.js
+        sed -i "s|YOUR_STORIES_JSON_URL_HERE|${{ secrets.STORIES_JSON_URL }}|g" js/config.js
+        sed -i "s|YOUR_ARTICLES_JSON_URL_HERE|${{ secrets.ARTICLES_JSON_URL }}|g" js/config.js
     
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3

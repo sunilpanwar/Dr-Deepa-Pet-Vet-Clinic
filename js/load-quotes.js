@@ -5,15 +5,8 @@ class QuotesLoader {
         this.currentQuoteIndex = 0;
         this.rotationInterval = null;
         
-        // Configure your JSON source here:
-        // Option 1: Local file (requires local server)
-        //this.jsonUrl = 'data/quotes.json';
-        
-        // Option 2: GitHub raw URL (works without local server!)
-         this.jsonUrl = 'https://gist.githubusercontent.com/sunilpanwar/606de5450c58d75a0415e220f510e0b5/raw/b79a7dfca9a511ed41694a61c280569c7d37856c/quotes.json';
-        
-        // Option 3: Google Drive public link (convert to direct download link)
-        // this.jsonUrl = 'https://drive.google.com/uc?export=download&id=YOUR_FILE_ID';
+        // Get JSON URL from config
+        this.jsonUrl = window.CONFIG?.QUOTES_JSON_URL || 'data/quotes.json';
         
         this.quoteText = document.getElementById('quoteText');
         this.quoteAuthor = document.getElementById('quoteAuthor');

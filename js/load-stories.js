@@ -5,14 +5,8 @@
 
 class StoriesLoader {
     constructor() {
-        // Configure JSON source - can be local file, GitHub, or Google Drive
-        //this.jsonUrl = 'data/stories.json';
-        
-        // For GitHub hosting (use this URL format when hosting online):
-        this.jsonUrl = 'https://gist.githubusercontent.com/sunilpanwar/3ab0d4f0c33a9d15450c1712f21c24d8/raw/775c65a99737ac98c7ba0c53adaa125d0918cdfe/stories.json';
-        
-        // For Google Drive (use direct download link):
-        // this.jsonUrl = 'https://drive.google.com/uc?export=download&id=YOUR-FILE-ID';
+        // Get JSON URL from config
+        this.jsonUrl = window.CONFIG?.STORIES_JSON_URL || 'data/stories.json';
         
         this.storiesGrid = document.getElementById('storiesGrid');
         this.stories = [];
