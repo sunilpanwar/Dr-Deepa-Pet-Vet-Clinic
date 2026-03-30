@@ -78,57 +78,69 @@ function populateBreedDropdown(petType) {
 }
 
 // Handle pet type change
-petTypeSelect.addEventListener('change', (e) => {
-    if (e.target.value) {
-        populateBreedDropdown(e.target.value);
-        petBreedSelect.disabled = false;
-    } else {
-        petBreedSelect.innerHTML = '<option value="">Select breed</option>';
-        petBreedSelect.disabled = true;
-        otherBreedGroup.style.display = 'none';
-    }
-});
+if (petTypeSelect) {
+    petTypeSelect.addEventListener('change', (e) => {
+        if (e.target.value) {
+            populateBreedDropdown(e.target.value);
+            petBreedSelect.disabled = false;
+        } else {
+            petBreedSelect.innerHTML = '<option value="">Select breed</option>';
+            petBreedSelect.disabled = true;
+            if (otherBreedGroup) otherBreedGroup.style.display = 'none';
+        }
+    });
+}
 
 // Handle breed selection
-petBreedSelect.addEventListener('change', (e) => {
-    if (e.target.value === 'other') {
-        otherBreedGroup.style.display = 'block';
-        otherBreedInput.required = true;
-    } else {
-        otherBreedGroup.style.display = 'none';
-        otherBreedInput.required = false;
-        otherBreedInput.value = '';
-    }
-});
+if (petBreedSelect) {
+    petBreedSelect.addEventListener('change', (e) => {
+        if (e.target.value === 'other') {
+            if (otherBreedGroup) otherBreedGroup.style.display = 'block';
+            if (otherBreedInput) otherBreedInput.required = true;
+        } else {
+            if (otherBreedGroup) otherBreedGroup.style.display = 'none';
+            if (otherBreedInput) {
+                otherBreedInput.required = false;
+                otherBreedInput.value = '';
+            }
+        }
+    });
+}
 
 // ===================================
 // Modal Controls
 // ===================================
 function openModal() {
+    if (!modal) return;
     modal.style.display = 'flex';
     document.body.style.overflow = 'hidden';
-    petBreedSelect.disabled = true;
+    if (petBreedSelect) petBreedSelect.disabled = true;
 }
 
 function closeModal() {
+    if (!modal) return;
     modal.style.display = 'none';
     document.body.style.overflow = '';
-    shareStoryForm.reset();
-    otherBreedGroup.style.display = 'none';
-    petBreedSelect.disabled = true;
-    petBreedSelect.innerHTML = '<option value="">Select breed</option>';
+    if (shareStoryForm) shareStoryForm.reset();
+    if (otherBreedGroup) otherBreedGroup.style.display = 'none';
+    if (petBreedSelect) {
+        petBreedSelect.disabled = true;
+        petBreedSelect.innerHTML = '<option value="">Select breed</option>';
+    }
 }
 
 // Close modal events
-closeModalBtn.addEventListener('click', closeModal);
-cancelBtn.addEventListener('click', closeModal);
+if (closeModalBtn) closeModalBtn.addEventListener('click', closeModal);
+if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
 
 // Close on overlay click
-modal.addEventListener('click', (e) => {
-    if (e.target === modal) {
-        closeModal();
-    }
-});
+if (modal) {
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            closeModal();
+        }
+    });
+}
 
 // Close on Escape key
 document.addEventListener('keydown', (e) => {
@@ -140,7 +152,8 @@ document.addEventListener('keydown', (e) => {
 // ===================================
 // Form Validation and Submission
 // ===================================
-shareStoryForm.addEventListener('submit', async (e) => {
+if (shareStoryForm) {
+    shareStoryForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     
     // Validate story length
@@ -229,7 +242,8 @@ shareStoryForm.addEventListener('submit', async (e) => {
         // Show error message
         alert('Sorry, there was an error submitting your story. Please try again or contact us directly.');
     }
-});
+    });
+}
 
 // ===================================
 // Helper Functions
@@ -324,18 +338,20 @@ function initializeCharCounter() {
 // ===================================
 // Form Input Validation (Real-time)
 // ===================================
-const formInputs = shareStoryForm.querySelectorAll('input, select, textarea');
-formInputs.forEach(input => {
-    input.addEventListener('input', () => {
-        if (input.checkValidity()) {
-            input.style.borderColor = '#BDC3C7';
-        }
+if (shareStoryForm) {
+    const formInputs = shareStoryForm.querySelectorAll('input, select, textarea');
+    formInputs.forEach(input => {
+        input.addEventListener('input', () => {
+            if (input.checkValidity()) {
+                input.style.borderColor = '#BDC3C7';
+            }
+        });
+        
+        input.addEventListener('invalid', () => {
+            input.style.borderColor = '#E74C3C';
+        });
     });
-    
-    input.addEventListener('invalid', () => {
-        input.style.borderColor = '#E74C3C';
-    });
-});
+}
 
 // Initialize character counter on page load
 initializeCharCounter();
