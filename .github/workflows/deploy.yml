@@ -1,0 +1,28 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    - name: Replace configuration values
+      run: |
+        # Replace placeholders in config.js with actual values from secrets
+        sed -i "s|YOUR_GOOGLE_APPS_SCRIPT_URL_HERE|${{ secrets.GOOGLE_SCRIPT_URL }}|g" js/config.js
+        sed -i "s|RECAPTCHA_SITE_KEY: ''|RECAPTCHA_SITE_KEY: '${{ secrets.RECAPTCHA_SITE_KEY }}'|g" js/config.js
+        sed -i "s|ENABLE_RECAPTCHA: false|ENABLE_RECAPTCHA: true|g" js/config.js
+    
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./
+        publish_branch: gh-pages

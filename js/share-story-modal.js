@@ -2,16 +2,11 @@
 // Share Story Modal Functionality
 // ===================================
 
-// Google Apps Script Web App URL
-// IMPORTANT: Replace this with your actual Google Apps Script Web App URL
-// See GOOGLE_APPS_SCRIPT_SETUP.md for instructions
-const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwvjw5yxcFgGk1h3g8aCwm3w24WdJROcU8qkHlZCbLho1C6zFNv8r6S1SazRlCS4KdJFw/exec';
-
-// reCAPTCHA Site Key
-// IMPORTANT: Replace with your actual reCAPTCHA Site Key (starts with 6L...)
-// Get this from https://www.google.com/recaptcha/admin
-// Leave as empty string '' to disable reCAPTCHA
-const RECAPTCHA_SITE_KEY = ''; // Add your Site Key here or leave empty to disable
+// Get configuration from config.js
+// Make sure config.js is loaded before this script
+const GOOGLE_SCRIPT_URL = window.CONFIG?.GOOGLE_SCRIPT_URL || 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE';
+const RECAPTCHA_SITE_KEY = window.CONFIG?.RECAPTCHA_SITE_KEY || '';
+const ENABLE_RECAPTCHA = window.CONFIG?.ENABLE_RECAPTCHA || false;
 
 const modal = document.getElementById('shareStoryModal');
 const shareStoryForm = document.getElementById('shareStoryForm');
