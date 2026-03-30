@@ -25,7 +25,7 @@ const ENABLE_EMAIL_NOTIFICATIONS = true; // Set to false to disable
 const NOTIFICATION_EMAIL = 'your-email@example.com'; // CHANGE THIS to your email
 
 // reCAPTCHA settings
-const ENABLE_RECAPTCHA = true; // Set to false to disable reCAPTCHA verification
+const ENABLE_RECAPTCHA = false; // Set to true after setting up reCAPTCHA (see RECAPTCHA_SETUP_GUIDE.md)
 const RECAPTCHA_SECRET_KEY = 'YOUR_RECAPTCHA_SECRET_KEY_HERE'; // Get from Google reCAPTCHA
 
 // Rate limiting settings (prevents spam)

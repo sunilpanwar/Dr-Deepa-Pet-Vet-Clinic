@@ -7,6 +7,12 @@
 // See GOOGLE_APPS_SCRIPT_SETUP.md for instructions
 const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwvjw5yxcFgGk1h3g8aCwm3w24WdJROcU8qkHlZCbLho1C6zFNv8r6S1SazRlCS4KdJFw/exec';
 
+// reCAPTCHA Site Key
+// IMPORTANT: Replace with your actual reCAPTCHA Site Key (starts with 6L...)
+// Get this from https://www.google.com/recaptcha/admin
+// Leave as empty string '' to disable reCAPTCHA
+const RECAPTCHA_SITE_KEY = ''; // Add your Site Key here or leave empty to disable
+
 const modal = document.getElementById('shareStoryModal');
 const shareStoryForm = document.getElementById('shareStoryForm');
 const closeModalBtn = document.getElementById('closeModal');
@@ -162,18 +168,6 @@ shareStoryForm.addEventListener('submit', async (e) => {
         finalBreed = otherBreedInput.value;
     }
     
-    // Get form data
-    const formData = {
-        petName: document.getElementById('petName').value,
-        petType: document.getElementById('petType').value,
-        petBreed: finalBreed,
-        ownerName: document.getElementById('ownerName').value,
-        storyTitle: document.getElementById('storyTitle').value,
-        storyText: storyContent,
-        email: document.getElementById('email').value,
-        photoUrl: document.getElementById('photoUrl').value || ''
-    };
-    
     // Show loading state
     const submitBtn = shareStoryForm.querySelector('button[type="submit"]');
     const originalBtnText = submitBtn.innerHTML;
@@ -185,6 +179,36 @@ shareStoryForm.addEventListener('submit', async (e) => {
         if (GOOGLE_SCRIPT_URL === 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE') {
             throw new Error('Google Apps Script URL not configured. Please see GOOGLE_APPS_SCRIPT_SETUP.md');
         }
+        
+        // Get reCAPTCHA token if enabled
+        let recaptchaToken = '';
+        if (RECAPTCHA_SITE_KEY && RECAPTCHA_SITE_KEY !== '') {
+            try {
+                // Check if grecaptcha is loaded
+                if (typeof grecaptcha === 'undefined') {
+                    console.warn('reCAPTCHA not loaded. Submitting without token.');
+                } else {
+                    recaptchaToken = await grecaptcha.execute(RECAPTCHA_SITE_KEY, {action: 'submit_story'});
+                    console.log('reCAPTCHA token obtained');
+                }
+            } catch (recaptchaError) {
+                console.error('reCAPTCHA error:', recaptchaError);
+                // Continue without token - server will handle it
+            }
+        }
+        
+        // Get form data
+        const formData = {
+            petName: document.getElementById('petName').value,
+            petType: document.getElementById('petType').value,
+            petBreed: finalBreed,
+            ownerName: document.getElementById('ownerName').value,
+            storyTitle: document.getElementById('storyTitle').value,
+            storyText: storyContent,
+            email: document.getElementById('email').value,
+            photoUrl: document.getElementById('photoUrl').value || '',
+            recaptchaToken: recaptchaToken  // Include token (empty string if disabled)
+        };
         
         // Submit to Google Apps Script
         const response = await fetch(GOOGLE_SCRIPT_URL, {
