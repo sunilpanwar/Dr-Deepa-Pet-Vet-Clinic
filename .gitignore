@@ -1,6 +1,4 @@
-# Local configuration (contains sensitive keys for local development)
-js/config.js
-
+# Ignore node modules and environment files
 # Node modules
 node_modules/
 
