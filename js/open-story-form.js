@@ -1,0 +1,195 @@
+/**
+ * Open Google Apps Script Story Form in Modal
+ * Simple script to open the Google-hosted form in an iframe modal
+ */
+
+// Get Google Form URL from config
+const GOOGLE_FORM_URL = window.CONFIG?.GOOGLE_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbwB0ZWUlgLSwFQUg724V6cpRcEffCMIRyUynaMM5Io/dev';
+
+// Create modal HTML
+const modalHTML = `
+<div id="storyFormModal" class="story-form-modal" style="display: none;">
+    <div class="modal-overlay" onclick="closeStoryFormModal()"></div>
+    <div class="modal-container">
+        <button class="modal-close" onclick="closeStoryFormModal()" aria-label="Close">
+            <i class="fas fa-times"></i>
+        </button>
+        <iframe 
+            id="storyFormIframe"
+            src="${GOOGLE_FORM_URL}"
+            frameborder="0"
+            style="width: 100%; height: 100%; border: none; border-radius: 0 0 20px 20px;">
+        </iframe>
+    </div>
+</div>
+
+<style>
+.story-form-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    animation: fadeIn 0.3s ease;
+}
+
+.story-form-modal .modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    cursor: pointer;
+}
+
+.story-form-modal .modal-container {
+    position: relative;
+    background: white;
+    border-radius: 20px;
+    max-width: 900px;
+    width: 100%;
+    height: 90vh;
+    max-height: 800px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    animation: slideUp 0.3s ease;
+    overflow: hidden;
+}
+
+.story-form-modal .modal-close {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    cursor: pointer;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #2C3E50;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.story-form-modal .modal-close:hover {
+    background: #E74C3C;
+    color: white;
+    transform: rotate(90deg);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 768px) {
+    .story-form-modal {
+        padding: 10px;
+    }
+    
+    .story-form-modal .modal-container {
+        height: 95vh;
+        max-height: none;
+        border-radius: 15px;
+    }
+}
+</style>
+`;
+
+// Add modal to page when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+    // Add modal HTML to body
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+    
+    // Add click listeners to all "Share Your Story" buttons
+    const shareButtons = document.querySelectorAll(
+        '.share-story-cta .btn, ' +
+        'a[href*="#contact"]:has-text("Share Your Story"), ' +
+        '#shareStoryBtnTop, ' +
+        '.share-story-btn-top, ' +
+        '[data-action="share-story"]'
+    );
+    
+    shareButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            openStoryFormModal();
+        });
+    });
+    
+    // Also listen for generic clicks
+    document.addEventListener('click', function(e) {
+        const target = e.target.closest('a, button');
+        if (target && (
+            target.id === 'shareStoryBtnTop' ||
+            target.classList.contains('share-story-btn-top') ||
+            target.getAttribute('data-action') === 'share-story' ||
+            (target.textContent && target.textContent.includes('Share Your Story'))
+        )) {
+            e.preventDefault();
+            openStoryFormModal();
+        }
+    });
+});
+
+/**
+ * Open the story form modal
+ */
+function openStoryFormModal() {
+    const modal = document.getElementById('storyFormModal');
+    if (modal) {
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+        
+        // Reload iframe to ensure fresh form
+        const iframe = document.getElementById('storyFormIframe');
+        if (iframe) {
+            iframe.src = iframe.src;
+        }
+    }
+}
+
+/**
+ * Close the story form modal
+ */
+function closeStoryFormModal() {
+    const modal = document.getElementById('storyFormModal');
+    if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+    }
+}
+
+// Make functions globally available
+window.openStoryFormModal = openStoryFormModal;
+window.closeStoryFormModal = closeStoryFormModal;
+
+// Close on Escape key
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closeStoryFormModal();
+    }
+});
+
+console.log('%c📝 Story Form Modal Ready', 'color: #4A90E2; font-size: 14px; font-weight: bold;');
