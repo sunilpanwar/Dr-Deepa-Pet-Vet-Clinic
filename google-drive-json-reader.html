@@ -358,13 +358,34 @@
             try {
                 // Use CORS proxy to bypass CORS restrictions
                 const googleDriveUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
-                const proxyUrl = 'https://api.allorigins.win/raw?url=';
-                const url = proxyUrl + encodeURIComponent(googleDriveUrl);
                 
-                const response = await fetch(url);
+                // Try multiple CORS proxies for better reliability
+                const proxies = [
+                    'https://corsproxy.io/?',
+                    'https://api.codetabs.com/v1/proxy?quest=',
+                    'https://thingproxy.freeboard.io/fetch/'
+                ];
                 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                let response = null;
+                let lastError = null;
+                
+                // Try each proxy until one works
+                for (const proxyUrl of proxies) {
+                    try {
+                        const url = proxyUrl + encodeURIComponent(googleDriveUrl);
+                        showStatus(`🔄 Trying proxy ${proxies.indexOf(proxyUrl) + 1}/${proxies.length}...`, 'loading');
+                        response = await fetch(url);
+                        if (response.ok) {
+                            break;
+                        }
+                    } catch (err) {
+                        lastError = err;
+                        continue;
+                    }
+                }
+                
+                if (!response || !response.ok) {
+                    throw lastError || new Error('All CORS proxies failed. The file may not be publicly accessible.');
                 }
                 
                 const text = await response.text();
