@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Drive JSON Reader</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .file-input-group {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .file-input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .file-input-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .file-input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .status {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .status.show {
+            display: block;
+        }
+
+        .status.loading {
+            background: #e3f2fd;
+            color: #1976d2;
+            border-left: 4px solid #1976d2;
+        }
+
+        .status.success {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border-left: 4px solid #2e7d32;
+        }
+
+        .status.error {
+            background: #ffebee;
+            color: #c62828;
+            border-left: 4px solid #c62828;
+        }
+
+        .output-section {
+            margin-top: 20px;
+        }
+
+        .output-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .output-header h2 {
+            color: #333;
+            font-size: 1.5em;
+        }
+
+        .copy-btn {
+            background: #4caf50;
+            padding: 8px 20px;
+            font-size: 14px;
+        }
+
+        .copy-btn:hover {
+            background: #45a049;
+        }
+
+        pre {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            max-height: 600px;
+            border: 1px solid #ddd;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-card .label {
+            font-size: 0.9em;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+
+        .stat-card .value {
+            font-size: 2em;
+            font-weight: bold;
+        }
+
+        .instructions {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .instructions h3 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .instructions ol {
+            margin-left: 20px;
+            color: #856404;
+        }
+
+        .instructions li {
+            margin-bottom: 8px;
+        }
+
+        .instructions code {
+            background: #fff;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📄 Google Drive JSON Reader</h1>
+            <p>Read JSON content from Google Drive without downloading</p>
+        </div>
+
+        <div class="content">
+            <div class="instructions">
+                <h3>📋 How to Use:</h3>
+                <ol>
+                    <li>Make sure your Google Drive file is set to <strong>"Anyone with the link can view"</strong></li>
+                    <li>Extract the File ID from your Google Drive link</li>
+                    <li>Paste the File ID below (or use the pre-filled one)</li>
+                    <li>Click "Load JSON Data"</li>
+                </ol>
+                <p style="margin-top: 10px;"><strong>Example:</strong> From <code>https://drive.google.com/file/d/FILE_ID/view</code>, copy the <code>FILE_ID</code></p>
+            </div>
+
+            <div class="controls">
+                <div class="file-input-group">
+                    <label for="fileId">Google Drive File ID:</label>
+                    <input 
+                        type="text" 
+                        id="fileId" 
+                        placeholder="Enter Google Drive File ID"
+                        value="12trLHfeHWMZjLSidBikx_PM3MymSrWX3"
+                    >
+                </div>
+                <button onclick="loadData()" id="loadBtn">
+                    🚀 Load JSON Data
+                </button>
+            </div>
+
+            <div id="status" class="status"></div>
+
+            <div id="statsSection" style="display: none;">
+                <div class="stats">
+                    <div class="stat-card">
+                        <div class="label">File Size</div>
+                        <div class="value" id="fileSize">-</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="label">Total Keys</div>
+                        <div class="value" id="totalKeys">-</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="label">Data Type</div>
+                        <div class="value" id="dataType">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="outputSection" class="output-section" style="display: none;">
+                <div class="output-header">
+                    <h2>📊 JSON Data</h2>
+                    <button class="copy-btn" onclick="copyToClipboard()">
+                        📋 Copy JSON
+                    </button>
+                </div>
+                <pre id="output"></pre>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let jsonData = null;
+
+        function showStatus(message, type) {
+            const statusEl = document.getElementById('status');
+            statusEl.textContent = message;
+            statusEl.className = `status show ${type}`;
+        }
+
+        function hideStatus() {
+            const statusEl = document.getElementById('status');
+            statusEl.className = 'status';
+        }
+
+        function formatBytes(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+        }
+
+        function countKeys(obj) {
+            if (Array.isArray(obj)) {
+                return obj.length;
+            } else if (typeof obj === 'object' && obj !== null) {
+                return Object.keys(obj).length;
+            }
+            return 0;
+        }
+
+        function getDataType(data) {
+            if (Array.isArray(data)) {
+                return 'Array';
+            } else if (typeof data === 'object' && data !== null) {
+                return 'Object';
+            }
+            return typeof data;
+        }
+
+        async function loadData() {
+            const fileId = document.getElementById('fileId').value.trim();
+            
+            if (!fileId) {
+                showStatus('❌ Please enter a Google Drive File ID', 'error');
+                return;
+            }
+
+            const loadBtn = document.getElementById('loadBtn');
+            loadBtn.disabled = true;
+            loadBtn.textContent = '⏳ Loading...';
+            
+            showStatus('🔄 Fetching data from Google Drive...', 'loading');
+            
+            // Hide previous results
+            document.getElementById('outputSection').style.display = 'none';
+            document.getElementById('statsSection').style.display = 'none';
+
+            try {
+                // Use CORS proxy to bypass CORS restrictions
+                const googleDriveUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
+                const proxyUrl = 'https://api.allorigins.win/raw?url=';
+                const url = proxyUrl + encodeURIComponent(googleDriveUrl);
+                
+                const response = await fetch(url);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const text = await response.text();
+                jsonData = JSON.parse(text);
+                
+                // Display the data
+                document.getElementById('output').textContent = JSON.stringify(jsonData, null, 2);
+                document.getElementById('outputSection').style.display = 'block';
+                
+                // Show statistics
+                const jsonString = JSON.stringify(jsonData);
+                document.getElementById('fileSize').textContent = formatBytes(jsonString.length);
+                document.getElementById('totalKeys').textContent = countKeys(jsonData);
+                document.getElementById('dataType').textContent = getDataType(jsonData);
+                document.getElementById('statsSection').style.display = 'block';
+                
+                showStatus('✅ Data loaded successfully!', 'success');
+                
+            } catch (error) {
+                console.error('Error:', error);
+                showStatus(`❌ Error: ${error.message}. Make sure the file is public and contains valid JSON.`, 'error');
+            } finally {
+                loadBtn.disabled = false;
+                loadBtn.textContent = '🚀 Load JSON Data';
+            }
+        }
+
+        function copyToClipboard() {
+            if (!jsonData) {
+                showStatus('❌ No data to copy', 'error');
+                return;
+            }
+
+            const jsonString = JSON.stringify(jsonData, null, 2);
+            navigator.clipboard.writeText(jsonString).then(() => {
+                showStatus('✅ JSON copied to clipboard!', 'success');
+                setTimeout(hideStatus, 3000);
+            }).catch(err => {
+                showStatus('❌ Failed to copy to clipboard', 'error');
+            });
+        }
+
+        // Allow Enter key to trigger load
+        document.getElementById('fileId').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                loadData();
+            }
+        });
+
+        // Auto-load on page load if file ID is present
+        window.addEventListener('load', function() {
+            const fileId = document.getElementById('fileId').value.trim();
+            if (fileId) {
+                showStatus('💡 Click "Load JSON Data" to fetch the file, or press Enter', 'loading');
+            }
+        });
+    </script>
+</body>
+</html>
