@@ -3,8 +3,8 @@
  * Simple script to open the Google-hosted form in an iframe modal
  */
 
-// Get Google Form URL - use the dev URL you provided
-const GOOGLE_FORM_URL = 'https://script.google.com/macros/s/AKfycbwB0ZWUlgLSwFQUg724V6cpRcEffCMIRyUynaMM5Io/dev';
+// Get Google Form URL - MUST use /exec (production) URL for iframe embedding
+const GOOGLE_FORM_URL = 'https://script.google.com/macros/s/AKfycbxJjtXcZrzObLgAwqTpQJnmWavZLCeGFpXvQDzokn_0cAX87Hi5R7qSYHYzd2hyTTDi/exec';
 
 // Create modal HTML
 const modalHTML = `
@@ -164,7 +164,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Add click listeners to all "Share Your Story" links/buttons
     document.addEventListener('click', function(e) {
-        const target = e.target.closest('a[href*="AKfycbwB0ZWUlgLSwFQUg724V6cpRcEffCMIRyUynaMM5Io"], .share-story-btn-top, #shareStoryBtnTop');
+        const target = e.target.closest('a[href*="AKfycbxJjtXcZrzObLgAwqTpQJnmWavZLCeGFpXvQDzokn_0cAX87Hi5R7qSYHYzd2hyTTDi"], .share-story-btn-top, #shareStoryBtnTop, .share-story-link');
         if (target) {
             e.preventDefault();
             openStoryFormModal();
