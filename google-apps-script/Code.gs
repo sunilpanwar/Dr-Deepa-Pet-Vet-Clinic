@@ -459,15 +459,93 @@ function doPost(e) {
 }
 
 /**
- * Handle GET requests (for testing)
+ * Handle GET requests - Serve the HTML form
  */
 function doGet(e) {
-  return ContentService
-    .createTextOutput(JSON.stringify({
-      'status': 'success',
-      'message': 'Story submission endpoint is working! Use POST to submit stories.'
-    }))
-    .setMimeType(ContentService.MimeType.JSON);
+  return HtmlService.createHtmlOutputFromFile('Form')
+    .setTitle('Share Your Success Story - Dr. Deepa Pet Vet Clinic')
+    .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+}
+
+/**
+ * Submit story from HTML form
+ * Called by google.script.run from Form.html
+ */
+function submitStory(formData) {
+  try {
+    // Get IP address (not available in HTML service, so we'll use 'Web Form')
+    const ipAddress = 'Web Form Submission';
+    const email = formData.email || '';
+    
+    // Check rate limiting
+    const rateLimitCheck = checkRateLimit(ipAddress, email);
+    if (!rateLimitCheck.allowed) {
+      throw new Error(rateLimitCheck.reason);
+    }
+    
+    // Get the spreadsheet and submissions sheet
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    let sheet = ss.getSheetByName(SHEET_NAME);
+    
+    // If sheet doesn't exist, create it
+    if (!sheet) {
+      setup();
+      sheet = ss.getSheetByName(SHEET_NAME);
+    }
+    
+    // Get submission counts
+    const counts = getSubmissionCounts(ipAddress, email);
+    
+    // Prepare the row data
+    const timestamp = new Date();
+    const userAgent = 'Google Apps Script Web Form';
+    
+    const rowData = [
+      timestamp,
+      'Pending',  // Status
+      formData.petName || '',
+      formData.petType || '',
+      formData.petBreed || '',
+      formData.petAge || '',
+      formData.ownerName || '',
+      formData.storyTitle || '',
+      formData.storyCategory || '',
+      formData.storyText || '',
+      formData.treatmentDate || '',
+      formData.outcome || '',
+      email,
+      '', // Photo URL (sent separately via email)
+      ipAddress,
+      userAgent,
+      counts.ipCount + 1,  // Submission count for this IP
+      counts.emailCount + 1  // Submission count for this email
+    ];
+    
+    // Append the data to the sheet
+    sheet.appendRow(rowData);
+    
+    // Update rate limiting counters
+    updateRateLimit(ipAddress, email);
+    
+    // Send email notification if enabled
+    if (ENABLE_EMAIL_NOTIFICATIONS && NOTIFICATION_EMAIL && NOTIFICATION_EMAIL !== 'your-email@example.com') {
+      try {
+        sendNotificationEmail(formData, ipAddress, counts);
+      } catch (emailError) {
+        Logger.log('Email notification error: ' + emailError.toString());
+        // Don't fail the submission if email fails
+      }
+    }
+    
+    return {
+      status: 'success',
+      message: 'Thank you for sharing your story! We will review it and publish it soon.'
+    };
+    
+  } catch (error) {
+    Logger.log('Error in submitStory: ' + error.toString());
+    throw new Error('Sorry, there was an error submitting your story. Please try again later.');
+  }
 }
 
 /**
