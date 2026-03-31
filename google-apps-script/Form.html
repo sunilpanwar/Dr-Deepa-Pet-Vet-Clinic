@@ -279,12 +279,20 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label for="petBreed">Breed *</label>
-                        <input type="text" id="petBreed" name="breed" required placeholder="e.g., Golden Retriever">
+                        <select id="petBreed" name="breed" required disabled>
+                            <option value="">Select breed</option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="petAge">Age *</label>
                         <input type="text" id="petAge" name="age" required placeholder="e.g., 7 years old">
                     </div>
+                </div>
+
+                <!-- Other Breed Input (hidden by default) -->
+                <div class="form-group" id="otherBreedGroup" style="display: none;">
+                    <label for="otherBreed">Please specify breed *</label>
+                    <input type="text" id="otherBreed" name="otherBreed" placeholder="Enter breed name">
                 </div>
 
                 <!-- Owner Information -->
@@ -366,6 +374,72 @@
     </div>
 
     <script>
+        // Breed lists
+        const dogBreeds = [
+            "Golden Retriever", "Labrador Retriever", "German Shepherd", "Beagle", "Pug",
+            "Boxer", "Chihuahua", "Cocker Spaniel", "Dachshund", "Dalmatian",
+            "Doberman Pinscher", "English Bulldog", "French Bulldog", "Great Dane",
+            "Indian Pariah Dog (Indie)", "Indian Spitz", "Maltese", "Mudhol Hound",
+            "Pomeranian", "Poodle", "Rajapalayam Dog", "Rottweiler", "Saint Bernard",
+            "Shih Tzu", "Siberian Husky", "Tibetan Mastiff"
+        ];
+
+        const catBreeds = [
+            "Persian Cat", "Siamese Cat", "Maine Coon", "British Shorthair Cat",
+            "Bengal Cat", "Abyssinian Cat", "Himalayan Cat", "Indie Cat",
+            "Ragdoll Cat", "Scottish Fold", "Sphynx Cat"
+        ];
+
+        // Get form elements
+        const petTypeSelect = document.getElementById('petType');
+        const petBreedSelect = document.getElementById('petBreed');
+        const otherBreedGroup = document.getElementById('otherBreedGroup');
+        const otherBreedInput = document.getElementById('otherBreed');
+
+        // Populate breed dropdown based on pet type
+        function populateBreedDropdown(petType) {
+            petBreedSelect.innerHTML = '<option value="">Select breed</option>';
+            
+            const breeds = petType === 'dog' ? dogBreeds : catBreeds;
+            
+            breeds.forEach(breed => {
+                const option = document.createElement('option');
+                option.value = breed;
+                option.textContent = breed;
+                petBreedSelect.appendChild(option);
+            });
+            
+            // Add "Other" option
+            const otherOption = document.createElement('option');
+            otherOption.value = 'other';
+            otherOption.textContent = 'Other (please specify)';
+            petBreedSelect.appendChild(otherOption);
+        }
+
+        // Handle pet type change
+        petTypeSelect.addEventListener('change', function(e) {
+            if (e.target.value) {
+                populateBreedDropdown(e.target.value);
+                petBreedSelect.disabled = false;
+            } else {
+                petBreedSelect.innerHTML = '<option value="">Select breed</option>';
+                petBreedSelect.disabled = true;
+                otherBreedGroup.style.display = 'none';
+            }
+        });
+
+        // Handle breed selection
+        petBreedSelect.addEventListener('change', function(e) {
+            if (e.target.value === 'other') {
+                otherBreedGroup.style.display = 'block';
+                otherBreedInput.required = true;
+            } else {
+                otherBreedGroup.style.display = 'none';
+                otherBreedInput.required = false;
+                otherBreedInput.value = '';
+            }
+        });
+
         // Character counter
         const storyContent = document.getElementById('storyContent');
         const charCounter = document.getElementById('charCounter');
@@ -403,11 +477,17 @@
             document.getElementById('formContainer').style.display = 'none';
             document.getElementById('loading').style.display = 'block';
             
+            // Handle "Other" breed
+            let finalBreed = petBreedSelect.value;
+            if (petBreedSelect.value === 'other' && otherBreedInput.value) {
+                finalBreed = otherBreedInput.value;
+            }
+
             // Prepare form data
             const formData = {
                 petName: document.getElementById('petName').value,
                 petType: document.getElementById('petType').value,
-                petBreed: document.getElementById('petBreed').value,
+                petBreed: finalBreed,
                 petAge: document.getElementById('petAge').value,
                 ownerName: document.getElementById('ownerName').value,
                 storyTitle: document.getElementById('storyTitle').value,
