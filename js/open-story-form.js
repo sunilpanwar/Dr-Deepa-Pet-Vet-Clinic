@@ -3,18 +3,18 @@
  * Simple script to open the Google-hosted form in an iframe modal
  */
 
-// Get Google Form URL from config
-const GOOGLE_FORM_URL = window.CONFIG?.GOOGLE_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbwB0ZWUlgLSwFQUg724V6cpRcEffCMIRyUynaMM5Io/dev';
+// Get Google Form URL - use the dev URL you provided
+const GOOGLE_FORM_URL = 'https://script.google.com/macros/s/AKfycbwB0ZWUlgLSwFQUg724V6cpRcEffCMIRyUynaMM5Io/dev';
 
 // Create modal HTML
 const modalHTML = `
 <div id="storyFormModal" class="story-form-modal" style="display: none;">
-    <div class="modal-overlay" onclick="closeStoryFormModal()"></div>
+    <div class="modal-overlay"></div>
     <div class="modal-container">
-        <button class="modal-close" onclick="closeStoryFormModal()" aria-label="Close">
+        <button class="modal-close" aria-label="Close">
             <i class="fas fa-times"></i>
         </button>
-        <iframe 
+        <iframe
             id="storyFormIframe"
             src="${GOOGLE_FORM_URL}"
             frameborder="0"
@@ -117,42 +117,6 @@ const modalHTML = `
 </style>
 `;
 
-// Add modal to page when DOM is ready
-document.addEventListener('DOMContentLoaded', function() {
-    // Add modal HTML to body
-    document.body.insertAdjacentHTML('beforeend', modalHTML);
-    
-    // Add click listeners to all "Share Your Story" buttons
-    const shareButtons = document.querySelectorAll(
-        '.share-story-cta .btn, ' +
-        'a[href*="#contact"]:has-text("Share Your Story"), ' +
-        '#shareStoryBtnTop, ' +
-        '.share-story-btn-top, ' +
-        '[data-action="share-story"]'
-    );
-    
-    shareButtons.forEach(button => {
-        button.addEventListener('click', function(e) {
-            e.preventDefault();
-            openStoryFormModal();
-        });
-    });
-    
-    // Also listen for generic clicks
-    document.addEventListener('click', function(e) {
-        const target = e.target.closest('a, button');
-        if (target && (
-            target.id === 'shareStoryBtnTop' ||
-            target.classList.contains('share-story-btn-top') ||
-            target.getAttribute('data-action') === 'share-story' ||
-            (target.textContent && target.textContent.includes('Share Your Story'))
-        )) {
-            e.preventDefault();
-            openStoryFormModal();
-        }
-    });
-});
-
 /**
  * Open the story form modal
  */
@@ -180,6 +144,33 @@ function closeStoryFormModal() {
         document.body.style.overflow = '';
     }
 }
+
+// Add modal to page when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+    // Add modal HTML to body
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+    
+    // Add click event to close button
+    const closeBtn = document.querySelector('.story-form-modal .modal-close');
+    if (closeBtn) {
+        closeBtn.addEventListener('click', closeStoryFormModal);
+    }
+    
+    // Add click event to overlay
+    const overlay = document.querySelector('.story-form-modal .modal-overlay');
+    if (overlay) {
+        overlay.addEventListener('click', closeStoryFormModal);
+    }
+    
+    // Add click listeners to all "Share Your Story" links/buttons
+    document.addEventListener('click', function(e) {
+        const target = e.target.closest('a[href*="AKfycbwB0ZWUlgLSwFQUg724V6cpRcEffCMIRyUynaMM5Io"], .share-story-btn-top, #shareStoryBtnTop');
+        if (target) {
+            e.preventDefault();
+            openStoryFormModal();
+        }
+    });
+});
 
 // Make functions globally available
 window.openStoryFormModal = openStoryFormModal;
