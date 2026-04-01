@@ -12,7 +12,7 @@
 const CONFIG = {
     // Google Apps Script Web App URL
     // Get this after deploying your Google Apps Script
-    GOOGLE_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbwvjw5yxcFgGk1h3g8aCwm3w24WdJROcU8qkHlZCbLho1C6zFNv8r6S1SazRlCS4KdJFw/exec',
+    GOOGLE_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbyFr9IPshZJMz2cwg86aXfNGhE89b3eJRSOVGKtXEl2MqGH4wSUyvO6XkLb2hmipeV4/exec',
     
     // reCAPTCHA Site Key (Public key - safe to expose)
     // Get from: https://www.google.com/recaptcha/admin
