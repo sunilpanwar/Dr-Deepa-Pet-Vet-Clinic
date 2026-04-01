@@ -22,7 +22,7 @@ const RATE_LIMIT_SHEET_NAME = 'Rate Limiting';
 
 // Email notification settings
 const ENABLE_EMAIL_NOTIFICATIONS = true; // Set to false to disable
-const NOTIFICATION_EMAIL = 'your-email@example.com'; // CHANGE THIS to your email
+const NOTIFICATION_EMAIL = 'panwarsunilsingh87@gmail.com'; // CHANGE THIS to your email
 
 // reCAPTCHA settings
 const ENABLE_RECAPTCHA = false; // Set to true after setting up reCAPTCHA (see RECAPTCHA_SETUP_GUIDE.md)
@@ -462,9 +462,14 @@ function doPost(e) {
  * Handle GET requests - Serve the HTML form
  */
 function doGet(e) {
-  return HtmlService.createHtmlOutputFromFile('Form')
-    .setTitle('Share Your Success Story - Dr. Deepa Pet Vet Clinic')
-    .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+  try {
+    return HtmlService.createHtmlOutputFromFile('Form')
+      .setTitle('Share Your Success Story - Dr. Deepa Pet Vet Clinic')
+      .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL)
+      .setSandboxMode(HtmlService.SandboxMode.IFRAME);
+  } catch (error) {
+    return HtmlService.createHtmlOutput('<h1>Error loading form</h1><p>' + error.toString() + '</p>');
+  }
 }
 
 /**
