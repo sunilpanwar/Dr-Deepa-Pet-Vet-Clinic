@@ -7,11 +7,11 @@ class GradientChanger {
     constructor() {
         this.gradients = [
             // Purple & Violet
-            { start: 'rgba(102, 126, 234, 0.88)', end: 'rgba(118, 75, 162, 0.88)', name: 'Royal Purple' },
+        //    { start: 'rgba(102, 126, 234, 0.88)', end: 'rgba(118, 75, 162, 0.88)', name: 'Royal Purple' },
             
             // Blue Variations
-            { start: 'rgba(74, 144, 226, 0.88)', end: 'rgba(80, 200, 120, 0.88)', name: 'Ocean Breeze' },
-            { start: 'rgba(52, 152, 219, 0.88)', end: 'rgba(41, 128, 185, 0.88)', name: 'Deep Blue' },
+        //    { start: 'rgba(74, 144, 226, 0.88)', end: 'rgba(80, 200, 120, 0.88)', name: 'Ocean Breeze' },
+            /*{ start: 'rgba(52, 152, 219, 0.88)', end: 'rgba(41, 128, 185, 0.88)', name: 'Deep Blue' },
             { start: 'rgba(135, 206, 250, 0.88)', end: 'rgba(70, 130, 180, 0.88)', name: 'Sky Blue' },
             
             // Teal & Cyan
@@ -23,26 +23,26 @@ class GradientChanger {
             { start: 'rgba(123, 237, 159, 0.88)', end: 'rgba(0, 180, 219, 0.88)', name: 'Mint Breeze' },
             
             // Warm Colors
-            { start: 'rgba(250, 177, 160, 0.88)', end: 'rgba(255, 107, 107, 0.88)', name: 'Coral Sunset' },
-            { start: 'rgba(255, 159, 64, 0.88)', end: 'rgba(255, 99, 132, 0.88)', name: 'Warm Peach' },
-            { start: 'rgba(255, 195, 113, 0.88)', end: 'rgba(255, 107, 129, 0.88)', name: 'Golden Hour' },
+            { start: 'rgba(250, 177, 160, 0.88)', end: 'rgba(255, 107, 107, 0.88)', name: 'Coral Sunset' },*/
+        //    { start: 'rgba(255, 159, 64, 0.88)', end: 'rgba(255, 99, 132, 0.88)', name: 'Warm Peach' },
+            /*{ start: 'rgba(255, 195, 113, 0.88)', end: 'rgba(255, 107, 129, 0.88)', name: 'Golden Hour' },
             
             // Pink & Rose
             { start: 'rgba(255, 118, 117, 0.88)', end: 'rgba(253, 121, 168, 0.88)', name: 'Rose Garden' },
-            { start: 'rgba(250, 130, 176, 0.88)', end: 'rgba(184, 59, 94, 0.88)', name: 'Pink Blossom' },
+            { start: 'rgba(250, 130, 176, 0.88)', end: 'rgba(184, 59, 94, 0.88)', name: 'Pink Blossom' },*/
             
             // Purple to Pink
-            { start: 'rgba(159, 122, 234, 0.88)', end: 'rgba(255, 107, 129, 0.88)', name: 'Lavender Dream' },
-            { start: 'rgba(186, 104, 200, 0.88)', end: 'rgba(244, 143, 177, 0.88)', name: 'Purple Haze' },
+         //   { start: 'rgba(159, 122, 234, 0.88)', end: 'rgba(255, 107, 129, 0.88)', name: 'Lavender Dream' },
+            //{ start: 'rgba(186, 104, 200, 0.88)', end: 'rgba(244, 143, 177, 0.88)', name: 'Purple Haze' },
             
             // Multi-color Blends
-            { start: 'rgba(255, 121, 63, 0.88)', end: 'rgba(255, 224, 130, 0.88)', name: 'Sunset Glow' },
-            { start: 'rgba(67, 233, 123, 0.88)', end: 'rgba(56, 249, 215, 0.88)', name: 'Tropical' },
-            { start: 'rgba(250, 208, 196, 0.88)', end: 'rgba(255, 209, 255, 0.88)', name: 'Pastel Dream' },
+          //  { start: 'rgba(255, 121, 63, 0.88)', end: 'rgba(255, 224, 130, 0.88)', name: 'Sunset Glow' },
+            /*{ start: 'rgba(67, 233, 123, 0.88)', end: 'rgba(56, 249, 215, 0.88)', name: 'Tropical' },
+            { start: 'rgba(250, 208, 196, 0.88)', end: 'rgba(255, 209, 255, 0.88)', name: 'Pastel Dream' },*/
             
             // Cool Tones
             { start: 'rgba(106, 17, 203, 0.88)', end: 'rgba(37, 117, 252, 0.88)', name: 'Electric Blue' },
-            { start: 'rgba(79, 172, 254, 0.88)', end: 'rgba(0, 242, 254, 0.88)', name: 'Ice Blue' }
+            //{ start: 'rgba(79, 172, 254, 0.88)', end: 'rgba(0, 242, 254, 0.88)', name: 'Ice Blue' }
         ];
         
         this.currentIndex = 0;
