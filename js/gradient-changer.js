@@ -63,7 +63,7 @@ class GradientChanger {
         this.heroOverlay = document.querySelector('.hero-overlay');
         
         if (!this.heroOverlay) {
-            console.warn('Hero overlay element not found');
+            //console.warn('Hero overlay element not found');
             return;
         }
         
@@ -75,7 +75,7 @@ class GradientChanger {
             this.rotateGradient();
         }, 10000);
         
-        console.log('Gradient changer initialized with', this.gradients.length, 'color combinations');
+        //console.log('Gradient changer initialized with', this.gradients.length, 'color combinations');
     }
     
     applyGradient(index) {
@@ -86,7 +86,7 @@ class GradientChanger {
         this.heroOverlay.style.transition = 'background 2s ease-in-out';
         this.heroOverlay.style.background = gradientCSS;
         
-        console.log(`Applied gradient: ${gradient.name}`);
+        //console.log(`Applied gradient: ${gradient.name}`);
     }
     
     rotateGradient() {
@@ -99,7 +99,7 @@ class GradientChanger {
         if (this.intervalId) {
             clearInterval(this.intervalId);
             this.intervalId = null;
-            console.log('Gradient changer stopped');
+            //console.log('Gradient changer stopped');
         }
     }
     

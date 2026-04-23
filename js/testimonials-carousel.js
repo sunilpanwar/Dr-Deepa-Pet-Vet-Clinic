@@ -266,4 +266,4 @@ window.TestimonialsCarousel = TestimonialsCarousel;
 
 // Don't auto-initialize - let load-reviews.js initialize after loading reviews
 // The carousel will be initialized by load-reviews.js after reviews are loaded
-console.log('TestimonialsCarousel: Class loaded, waiting for reviews...');
+//console.log('TestimonialsCarousel: Class loaded, waiting for reviews...');

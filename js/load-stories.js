@@ -15,7 +15,7 @@ class StoriesLoader {
     }
     
     async init() {
-        console.log('📖 Loading success stories...');
+        //console.log('📖 Loading success stories...');
         await this.loadStories();
     }
     
@@ -28,7 +28,7 @@ class StoriesLoader {
             }
             
             this.stories = await response.json();
-            console.log(`✅ Loaded ${this.stories.length} stories successfully`);
+            //console.log(`✅ Loaded ${this.stories.length} stories successfully`);
             
             this.renderStories();
             
@@ -53,7 +53,7 @@ class StoriesLoader {
             this.storiesGrid.appendChild(storyCard);
         });
         
-        console.log(`✅ Rendered ${this.stories.length} story cards`);
+        //console.log(`✅ Rendered ${this.stories.length} story cards`);
     }
     
     createStoryCard(story) {
@@ -131,4 +131,4 @@ document.addEventListener('DOMContentLoaded', () => {
     window.storiesLoader = new StoriesLoader();
 });
 
-console.log('%c📖 Stories Loader Ready', 'color: #4A90E2; font-size: 14px; font-weight: bold;');
+//console.log('%c📖 Stories Loader Ready', 'color: #4A90E2; font-size: 14px; font-weight: bold;');

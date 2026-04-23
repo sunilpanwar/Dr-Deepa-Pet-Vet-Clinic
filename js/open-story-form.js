@@ -184,4 +184,4 @@ document.addEventListener('keydown', function(e) {
     }
 });
 
-console.log('%c📝 Story Form Modal Ready', 'color: #4A90E2; font-size: 14px; font-weight: bold;');
+//console.log('%c📝 Story Form Modal Ready', 'color: #4A90E2; font-size: 14px; font-weight: bold;');

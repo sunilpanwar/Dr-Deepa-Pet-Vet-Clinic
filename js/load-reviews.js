@@ -10,11 +10,11 @@ class ReviewsLoader {
     }
 
     async init() {
-        console.log('ReviewsLoader: Initializing...');
+        //console.log('ReviewsLoader: Initializing...');
         await this.loadReviews();
         if (this.reviews.length > 0) {
             this.renderReviews();
-            console.log(`ReviewsLoader: Loaded ${this.reviews.length} reviews`);
+            //console.log(`ReviewsLoader: Loaded ${this.reviews.length} reviews`);
         } else {
             console.warn('ReviewsLoader: No reviews loaded');
         }
@@ -22,16 +22,15 @@ class ReviewsLoader {
 
     async loadReviews() {
         try {
-            console.log(`ReviewsLoader: Fetching ${this.jsonUrl}...`);
+            //console.log(`ReviewsLoader: Fetching ${this.jsonUrl}...`);
             const response = await fetch(this.jsonUrl);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             this.reviews = await response.json();
-            console.log('ReviewsLoader: Successfully loaded reviews:', this.reviews);
+            //console.log('ReviewsLoader: Successfully loaded reviews:', this.reviews);
         } catch (error) {
             console.error('ReviewsLoader Error:', error);
-            console.error('Tip: Use GitHub or Google Drive URL to avoid needing a local server');
             // Fallback to empty array if loading fails
             this.reviews = [];
         }
@@ -46,7 +45,7 @@ class ReviewsLoader {
 
         // Clear existing reviews
         testimonialsGrid.innerHTML = '';
-        console.log('ReviewsLoader: Rendering reviews...');
+        //console.log('ReviewsLoader: Rendering reviews...');
 
         // Render each review
         this.reviews.forEach(review => {
@@ -54,13 +53,13 @@ class ReviewsLoader {
             testimonialsGrid.appendChild(card);
         });
 
-        console.log(`ReviewsLoader: Rendered ${this.reviews.length} review cards`);
+        //console.log(`ReviewsLoader: Rendered ${this.reviews.length} review cards`);
 
         // Trigger carousel initialization after reviews are loaded
         // Wait a bit for DOM to update
         setTimeout(() => {
             if (window.TestimonialsCarousel) {
-                console.log('ReviewsLoader: Initializing carousel...');
+                //console.log('ReviewsLoader: Initializing carousel...');
                 new window.TestimonialsCarousel();
             }
         }, 100);

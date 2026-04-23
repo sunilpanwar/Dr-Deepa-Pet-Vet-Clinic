@@ -33,7 +33,7 @@ class ArticlesLoader {
             }
             this.articles = await response.json();
             this.filteredArticles = [...this.articles];
-            console.log(`Loaded ${this.articles.length} articles successfully`);
+            //console.log(`Loaded ${this.articles.length} articles successfully`);
         } catch (error) {
             console.error('Error loading articles:', error);
             throw error;
