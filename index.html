@@ -12,6 +12,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
     <script src="js/components-loader.js"></script>
+    <!-- Load config before other scripts -->
+    <script src="js/config.js"></script>
 </head>
 <body>
     <!-- Header loads automatically from includes/header.html -->
@@ -31,10 +33,10 @@
                         <i class="fas fa-check-circle"></i>
                         <span>24/7 Emergency Care</span>
                     </div> -->
-                    <div class="feature-item">
+                    <!--<div class="feature-item">
                         <i class="fas fa-check-circle"></i>
                         <span>Experienced Veterinarians</span>
-                    </div>
+                    </div>-->
                     <!--<div class="feature-item">
                         <i class="fas fa-check-circle"></i>
                         <span>Modern Facilities</span>
@@ -44,8 +46,11 @@
                 <div class="hero-buttons">
                     <!--<a href="#appointment" class="btn btn-primary">Book Appointment</a> -->
                     <a href="#contact" class="btn btn-secondary">Contact Us</a>
+                    <a href="https://g.page/r/CUTnCxmQ4-egEAE/review" target="_blank" class="btn btn-primary" style="background: linear-gradient(135deg, #4285f4, #34a853); border: none;">
+                        <i class="fab fa-google"></i> Leave a Google Review
+                    </a>
                 </div>
-                <a href="https://www.google.com/maps/place/Dr.+Deepa+pet+vet+clinic/@30.2950861,78.0980542,893m/data=!3m1!1e3!4m8!3m7!1s0x390929faa0e5a02b:0xa0e7e390190be744!8m2!3d30.2951689!4d78.0978351!9m1!1b1!16s%2Fg%2F11kj9lx5db?entry=ttu&g_ep=EgoyMDI2MDMyNC4wIKXMDSoASAFQAw%3D%3D" target="_blank" class="google-rating-hero" style="text-decoration: none; color: inherit; cursor: pointer;">
+                <!--<a href="https://www.google.com/maps/place/Dr.+Deepa+pet+vet+clinic/@30.2950861,78.0980542,893m/data=!3m1!1e3!4m8!3m7!1s0x390929faa0e5a02b:0xa0e7e390190be744!8m2!3d30.2951689!4d78.0978351!9m1!1b1!16s%2Fg%2F11kj9lx5db?entry=ttu&g_ep=EgoyMDI2MDMyNC4wIKXMDSoASAFQAw%3D%3D" target="_blank" class="google-rating-hero" style="text-decoration: none; color: inherit; cursor: pointer;">
                     <div class="rating-stars">
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
@@ -54,7 +59,7 @@
                         <i class="fas fa-star-half-alt"></i>
                     </div>
                     <span class="rating-text">4.9/5 on Google Reviews - Click to View</span>
-                </a>
+                </a>-->
                                 <!-- Rotating Quotes Section -->
                 <div class="hero-quotes">
                     <div class="quote-container">
@@ -81,7 +86,7 @@
             </div>
             <div class="about-content">
                 <div class="about-image">
-                    <img src="images/vet-with-pet.png" alt="Dr. Deepa with pet" onerror="this.src='https://images.unsplash.com/photo-1576201836106-db1758fd1c97?w=600&h=400&fit=crop'">
+                    <img src="images/vet-with-pet.jpg" alt="Dr. Deepa with pet" onerror="this.src='https://images.unsplash.com/photo-1576201836106-db1758fd1c97?w=600&h=400&fit=crop'">
                     <div class="experience-badge">
                         <span class="badge-number">7+</span>
                         <span class="badge-text">Years Experience</span>
@@ -380,7 +385,7 @@
             <div class="share-story-cta">
                 <h3>Have a Success Story to Share?</h3>
                 <p>We'd love to hear about your pet's journey with us!</p>
-                <a href="#contact" class="btn btn-primary">Share Your Story</a>
+                <button type="button" class="btn btn-primary share-story-link" id="shareStoryBtn">Share Your Story</button>
             </div>
         </div>
     </section>
@@ -615,7 +620,7 @@
                 
                     </div>
                     <div class="map-overlay">
-                        <a href="https://maps.app.goo.gl/TKbkKxCZtHVjXxyQ7" target="_blank" class="btn btn-primary">
+                        <a href="https://g.page/r/CUTnCxmQ4-egEBM/review" target="_blank" class="btn btn-primary">
                             <i class="fas fa-directions"></i> Get Directions & Add Review
                         </a>
                     </div>
@@ -689,18 +694,6 @@
     <script src="js/load-reviews.js"></script>
     <script src="js/testimonials-carousel.js"></script>
     <script src="js/gradient-changer.js"></script>
-
-
-<!-- Start of OpenWidget (www.openwidget.com) code -->
-<script>
-  window.__ow = window.__ow || {};
-  window.__ow.organizationId = "7693f48a-2e20-485d-86b5-dc2b4e654a14";
-  window.__ow.integration_name = "manual_settings";
-  window.__ow.product_name = "openwidget";   
-  ;(function(n,t,c){function i(n){return e._h?e._h.apply(null,n):e._q.push(n)}var e={_q:[],_h:null,_v:"2.0",on:function(){i(["on",c.call(arguments)])},once:function(){i(["once",c.call(arguments)])},off:function(){i(["off",c.call(arguments)])},get:function(){if(!e._h)throw new Error("[OpenWidget] You can't use getters before load.");return i(["get",c.call(arguments)])},call:function(){i(["call",c.call(arguments)])},init:function(){var n=t.createElement("script");n.async=!0,n.type="text/javascript",n.src="https://cdn.openwidget.com/openwidget.js",t.head.appendChild(n)}};!n.__ow.asyncInit&&e.init(),n.OpenWidget=n.OpenWidget||e}(window,document,[].slice))
-</script>
-<noscript>You need to <a href="https://www.openwidget.com/enable-javascript" rel="noopener nofollow">enable JavaScript</a> to use the communication tool powered by <a href="https://www.openwidget.com/" rel="noopener nofollow" target="_blank">OpenWidget</a></noscript>
-<!-- End of OpenWidget code -->
-
+    <script src="js/open-story-form.js"></script>
 </body>
 </html>

@@ -2,10 +2,31 @@
 // Share Story Modal Functionality
 // ===================================
 
-// Google Apps Script Web App URL
-// IMPORTANT: Replace this with your actual Google Apps Script Web App URL
-// See GOOGLE_APPS_SCRIPT_SETUP.md for instructions
-const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwvjw5yxcFgGk1h3g8aCwm3w24WdJROcU8qkHlZCbLho1C6zFNv8r6S1SazRlCS4KdJFw/exec';
+// Get configuration from config.js
+// Make sure config.js is loaded before this script
+const GOOGLE_SCRIPT_URL = window.CONFIG?.GOOGLE_SCRIPT_URL || 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE';
+const RECAPTCHA_SITE_KEY = window.CONFIG?.RECAPTCHA_SITE_KEY || '';
+const ENABLE_RECAPTCHA = window.CONFIG?.ENABLE_RECAPTCHA || false;
+const DEBUG_MODE = window.CONFIG?.DEBUG_MODE || false;
+
+// Debug logger - only logs when DEBUG_MODE is true
+const debugLog = (...args) => {
+    if (DEBUG_MODE) {
+        console.log(...args);
+    }
+};
+
+const debugWarn = (...args) => {
+    if (DEBUG_MODE) {
+        console.warn(...args);
+    }
+};
+
+const debugError = (...args) => {
+    if (DEBUG_MODE) {
+        console.error(...args);
+    }
+};
 
 const modal = document.getElementById('shareStoryModal');
 const shareStoryForm = document.getElementById('shareStoryForm');
@@ -77,58 +98,69 @@ function populateBreedDropdown(petType) {
 }
 
 // Handle pet type change
-petTypeSelect.addEventListener('change', (e) => {
-    if (e.target.value) {
-        populateBreedDropdown(e.target.value);
-        petBreedSelect.disabled = false;
-    } else {
-        petBreedSelect.innerHTML = '<option value="">Select breed</option>';
-        petBreedSelect.disabled = true;
-        otherBreedGroup.style.display = 'none';
-    }
-});
+if (petTypeSelect) {
+    petTypeSelect.addEventListener('change', (e) => {
+        if (e.target.value) {
+            populateBreedDropdown(e.target.value);
+            petBreedSelect.disabled = false;
+        } else {
+            petBreedSelect.innerHTML = '<option value="">Select breed</option>';
+            petBreedSelect.disabled = true;
+            if (otherBreedGroup) otherBreedGroup.style.display = 'none';
+        }
+    });
+}
 
 // Handle breed selection
-petBreedSelect.addEventListener('change', (e) => {
-    if (e.target.value === 'other') {
-        otherBreedGroup.style.display = 'block';
-        otherBreedInput.required = true;
-    } else {
-        otherBreedGroup.style.display = 'none';
-        otherBreedInput.required = false;
-        otherBreedInput.value = '';
-    }
-});
+if (petBreedSelect) {
+    petBreedSelect.addEventListener('change', (e) => {
+        if (e.target.value === 'other') {
+            if (otherBreedGroup) otherBreedGroup.style.display = 'block';
+            if (otherBreedInput) otherBreedInput.required = true;
+        } else {
+            if (otherBreedGroup) otherBreedGroup.style.display = 'none';
+            if (otherBreedInput) {
+                otherBreedInput.required = false;
+                otherBreedInput.value = '';
+            }
+        }
+    });
+}
 
 // ===================================
 // Modal Controls
 // ===================================
 function openModal() {
+    if (!modal) return;
     modal.style.display = 'flex';
     document.body.style.overflow = 'hidden';
-    petBreedSelect.disabled = true;
+    if (petBreedSelect) petBreedSelect.disabled = true;
 }
 
 function closeModal() {
+    if (!modal) return;
     modal.style.display = 'none';
     document.body.style.overflow = '';
-    shareStoryForm.reset();
-    imagePreview.style.display = 'none';
-    otherBreedGroup.style.display = 'none';
-    petBreedSelect.disabled = true;
-    petBreedSelect.innerHTML = '<option value="">Select breed</option>';
+    if (shareStoryForm) shareStoryForm.reset();
+    if (otherBreedGroup) otherBreedGroup.style.display = 'none';
+    if (petBreedSelect) {
+        petBreedSelect.disabled = true;
+        petBreedSelect.innerHTML = '<option value="">Select breed</option>';
+    }
 }
 
 // Close modal events
-closeModalBtn.addEventListener('click', closeModal);
-cancelBtn.addEventListener('click', closeModal);
+if (closeModalBtn) closeModalBtn.addEventListener('click', closeModal);
+if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
 
 // Close on overlay click
-modal.addEventListener('click', (e) => {
-    if (e.target === modal) {
-        closeModal();
-    }
-});
+if (modal) {
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            closeModal();
+        }
+    });
+}
 
 // Close on Escape key
 document.addEventListener('keydown', (e) => {
@@ -140,39 +172,35 @@ document.addEventListener('keydown', (e) => {
 // ===================================
 // Form Validation and Submission
 // ===================================
-shareStoryForm.addEventListener('submit', async (e) => {
+if (shareStoryForm) {
+    shareStoryForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     
     // Validate story length
-    const storyContent = document.getElementById('storyContent').value;
+    const storyContentField = document.getElementById('storyContent');
+    if (!storyContentField) {
+        debugError('Story content field not found');
+        return;
+    }
+    
+    const storyContent = storyContentField.value;
     if (storyContent.length < 100) {
         alert('Please write at least 100 characters for your story.');
         return;
     }
     
     // Validate consent
-    if (!document.getElementById('consent').checked) {
+    const consentField = document.getElementById('consent');
+    if (!consentField || !consentField.checked) {
         alert('Please agree to the consent terms.');
         return;
     }
     
     // Handle "Other" breed
-    let finalBreed = petBreedSelect.value;
-    if (petBreedSelect.value === 'other' && otherBreedInput.value) {
+    let finalBreed = petBreedSelect ? petBreedSelect.value : '';
+    if (petBreedSelect && petBreedSelect.value === 'other' && otherBreedInput && otherBreedInput.value) {
         finalBreed = otherBreedInput.value;
     }
-    
-    // Get form data
-    const formData = {
-        petName: document.getElementById('petName').value,
-        petType: document.getElementById('petType').value,
-        petBreed: finalBreed,
-        ownerName: document.getElementById('ownerName').value,
-        storyTitle: document.getElementById('storyTitle').value,
-        storyText: storyContent,
-        email: document.getElementById('email').value,
-        photoUrl: document.getElementById('photoUrl').value || ''
-    };
     
     // Show loading state
     const submitBtn = shareStoryForm.querySelector('button[type="submit"]');
@@ -185,6 +213,49 @@ shareStoryForm.addEventListener('submit', async (e) => {
         if (GOOGLE_SCRIPT_URL === 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE') {
             throw new Error('Google Apps Script URL not configured. Please see GOOGLE_APPS_SCRIPT_SETUP.md');
         }
+        
+        // Get reCAPTCHA token if enabled
+        let recaptchaToken = '';
+        if (RECAPTCHA_SITE_KEY && RECAPTCHA_SITE_KEY !== '') {
+            try {
+                // Check if grecaptcha is loaded
+                if (typeof grecaptcha === 'undefined') {
+                    debugWarn('reCAPTCHA not loaded. Submitting without token.');
+                } else {
+                    recaptchaToken = await grecaptcha.execute(RECAPTCHA_SITE_KEY, {action: 'submit_story'});
+                    debugLog('reCAPTCHA token obtained');
+                }
+            } catch (recaptchaError) {
+                debugError('reCAPTCHA error:', recaptchaError);
+                // Continue without token - server will handle it
+            }
+        }
+        
+        // Get form data with null checks - using actual HTML field IDs
+        const petNameField = document.getElementById('petName');
+        const petTypeField = document.getElementById('petType');
+        const ownerNameField = document.getElementById('ownerName');
+        const storyTitleField = document.getElementById('storyTitle');
+        const emailField = document.getElementById('ownerEmail'); // Correct ID from HTML
+        const storyCategoryField = document.getElementById('storyCategory');
+        const petAgeField = document.getElementById('petAge');
+        const treatmentDateField = document.getElementById('treatmentDate');
+        const outcomeField = document.getElementById('outcome');
+        
+        const formData = {
+            petName: petNameField ? petNameField.value : '',
+            petType: petTypeField ? petTypeField.value : '',
+            petBreed: finalBreed,
+            petAge: petAgeField ? petAgeField.value : '',
+            ownerName: ownerNameField ? ownerNameField.value : '',
+            storyTitle: storyTitleField ? storyTitleField.value : '',
+            storyCategory: storyCategoryField ? storyCategoryField.value : '',
+            storyText: storyContent,
+            treatmentDate: treatmentDateField ? treatmentDateField.value : '',
+            outcome: outcomeField ? outcomeField.value : '',
+            email: emailField ? emailField.value : '',
+            recaptchaToken: recaptchaToken  // Include token (empty string if disabled)
+        };
         
         // Submit to Google Apps Script
         const response = await fetch(GOOGLE_SCRIPT_URL, {
@@ -201,7 +272,7 @@ shareStoryForm.addEventListener('submit', async (e) => {
         showSuccessConfirmation(formData.ownerName);
         
     } catch (error) {
-        console.error('Submission error:', error);
+        debugError('Submission error:', error);
         
         // Reset button
         submitBtn.innerHTML = originalBtnText;
@@ -210,7 +281,8 @@ shareStoryForm.addEventListener('submit', async (e) => {
         // Show error message
         alert('Sorry, there was an error submitting your story. Please try again or contact us directly.');
     }
-});
+    });
+}
 
 // ===================================
 // Helper Functions
@@ -259,7 +331,6 @@ function showSuccessConfirmation(name) {
         const newCancelBtn = document.getElementById('cancelBtn');
         newCancelBtn.addEventListener('click', closeModal);
         shareStoryForm.reset();
-        imagePreview.style.display = 'none';
         otherBreedGroup.style.display = 'none';
         petBreedSelect.disabled = true;
         petBreedSelect.innerHTML = '<option value="">Select breed</option>';
@@ -306,20 +377,22 @@ function initializeCharCounter() {
 // ===================================
 // Form Input Validation (Real-time)
 // ===================================
-const formInputs = shareStoryForm.querySelectorAll('input, select, textarea');
-formInputs.forEach(input => {
-    input.addEventListener('input', () => {
-        if (input.checkValidity()) {
-            input.style.borderColor = '#BDC3C7';
-        }
+if (shareStoryForm) {
+    const formInputs = shareStoryForm.querySelectorAll('input, select, textarea');
+    formInputs.forEach(input => {
+        input.addEventListener('input', () => {
+            if (input.checkValidity()) {
+                input.style.borderColor = '#BDC3C7';
+            }
+        });
+        
+        input.addEventListener('invalid', () => {
+            input.style.borderColor = '#E74C3C';
+        });
     });
-    
-    input.addEventListener('invalid', () => {
-        input.style.borderColor = '#E74C3C';
-    });
-});
+}
 
 // Initialize character counter on page load
 initializeCharCounter();
 
-console.log('%c📝 Share Story Modal Ready', 'color: #4A90E2; font-size: 14px; font-weight: bold;');
+debugLog('%c📝 Share Story Modal Ready', 'color: #4A90E2; font-size: 14px; font-weight: bold;');

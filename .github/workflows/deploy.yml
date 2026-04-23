@@ -1,0 +1,69 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [ main, master, add_reCaptcha, develop ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    - name: Debug - Check if secrets have values
+      run: |
+        echo "Checking if secrets are set (showing length, not actual values):"
+        echo "QUOTES_JSON_URL length: ${#QUOTES_URL}"
+        echo "REVIEWS_JSON_URL length: ${#REVIEWS_URL}"
+        echo "STORIES_JSON_URL length: ${#STORIES_URL}"
+        echo "ARTICLES_JSON_URL length: ${#ARTICLES_URL}"
+        echo "GOOGLE_SCRIPT_URL length: ${#GOOGLE_URL}"
+      env:
+        QUOTES_URL: ${{ secrets.QUOTES_JSON_URL }}
+        REVIEWS_URL: ${{ secrets.REVIEWS_JSON_URL }}
+        STORIES_URL: ${{ secrets.STORIES_JSON_URL }}
+        ARTICLES_URL: ${{ secrets.ARTICLES_JSON_URL }}
+        GOOGLE_URL: ${{ secrets.GOOGLE_SCRIPT_URL }}
+    
+    - name: Replace configuration values
+      run: |
+        # Replace placeholders in config.js with actual values from secrets
+        sed -i "s|YOUR_GOOGLE_APPS_SCRIPT_URL_HERE|${{ secrets.GOOGLE_SCRIPT_URL }}|g" js/config.js
+        sed -i "s|RECAPTCHA_SITE_KEY: ''|RECAPTCHA_SITE_KEY: '${{ secrets.RECAPTCHA_SITE_KEY }}'|g" js/config.js
+        sed -i "s|ENABLE_RECAPTCHA: false|ENABLE_RECAPTCHA: true|g" js/config.js
+        
+        # Replace JSON data URLs
+        sed -i "s|YOUR_QUOTES_JSON_URL_HERE|${{ secrets.QUOTES_JSON_URL }}|g" js/config.js
+        sed -i "s|YOUR_REVIEWS_JSON_URL_HERE|${{ secrets.REVIEWS_JSON_URL }}|g" js/config.js
+        sed -i "s|YOUR_STORIES_JSON_URL_HERE|${{ secrets.STORIES_JSON_URL }}|g" js/config.js
+        sed -i "s|YOUR_ARTICLES_JSON_URL_HERE|${{ secrets.ARTICLES_JSON_URL }}|g" js/config.js
+        
+        # Show what the file looks like after replacement (first 35 lines)
+        echo "=== Config file after replacement (first 35 lines) ==="
+        head -n 35 js/config.js
+    
+    - name: Verify files before deployment
+      run: |
+        echo "=== Checking config.js before deployment ==="
+        echo "First 35 lines of js/config.js:"
+        head -n 35 js/config.js
+        echo ""
+        echo "=== Checking if placeholders still exist ==="
+        if grep -q "YOUR_QUOTES_JSON_URL_HERE" js/config.js; then
+          echo "❌ ERROR: Placeholder still found in config.js!"
+          exit 1
+        else
+          echo "✅ No placeholders found - file is ready for deployment"
+        fi
+    
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./
+        publish_branch: gh-pages

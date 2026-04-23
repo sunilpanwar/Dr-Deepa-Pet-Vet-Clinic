@@ -22,10 +22,10 @@ const RATE_LIMIT_SHEET_NAME = 'Rate Limiting';
 
 // Email notification settings
 const ENABLE_EMAIL_NOTIFICATIONS = true; // Set to false to disable
-const NOTIFICATION_EMAIL = 'your-email@example.com'; // CHANGE THIS to your email
+const NOTIFICATION_EMAIL = 'panwarsunilsingh87@gmail.com'; // CHANGE THIS to your email
 
 // reCAPTCHA settings
-const ENABLE_RECAPTCHA = true; // Set to false to disable reCAPTCHA verification
+const ENABLE_RECAPTCHA = false; // Set to true after setting up reCAPTCHA (see RECAPTCHA_SETUP_GUIDE.md)
 const RECAPTCHA_SECRET_KEY = 'YOUR_RECAPTCHA_SECRET_KEY_HERE'; // Get from Google reCAPTCHA
 
 // Rate limiting settings (prevents spam)
@@ -54,9 +54,14 @@ function setup() {
     'Status',
     'Pet Name',
     'Pet Type',
+    'Pet Breed',
+    'Pet Age',
     'Owner Name',
     'Story Title',
+    'Story Category',
     'Story Text',
+    'Treatment Date',
+    'Outcome',
     'Email',
     'Photo URL',
     'IP Address',
@@ -79,9 +84,14 @@ function setup() {
     'ID',
     'Pet Name',
     'Pet Type',
+    'Pet Breed',
+    'Pet Age',
     'Owner Name',
     'Story Title',
+    'Story Category',
     'Story Text',
+    'Treatment Date',
+    'Outcome',
     'Photo URL',
     'Date Approved'
   ];
@@ -109,8 +119,8 @@ function setup() {
   rateLimitSheet.getRange(1, 1, 1, rateLimitHeaders.length).setFontWeight('bold');
   rateLimitSheet.setFrozenRows(1);
   
-  Logger.log('Setup complete! All sheets created with headers.');
-  Logger.log('Remember to update NOTIFICATION_EMAIL and RECAPTCHA_SECRET_KEY in the configuration!');
+  //Logger.log('Setup complete! All sheets created with headers.');
+  //Logger.log('Remember to update NOTIFICATION_EMAIL and RECAPTCHA_SECRET_KEY in the configuration!');
 }
 
 // ===================================
@@ -128,7 +138,7 @@ function verifyRecaptcha(token) {
   }
   
   if (!token) {
-    Logger.log('reCAPTCHA: No token provided');
+    //Logger.log('reCAPTCHA: No token provided');
     return false;
   }
   
@@ -147,11 +157,11 @@ function verifyRecaptcha(token) {
     const response = UrlFetchApp.fetch(url, options);
     const result = JSON.parse(response.getContentText());
     
-    Logger.log('reCAPTCHA verification result: ' + result.success);
+    //Logger.log('reCAPTCHA verification result: ' + result.success);
     return result.success === true;
     
   } catch (error) {
-    Logger.log('reCAPTCHA verification error: ' + error.toString());
+    //Logger.log('reCAPTCHA verification error: ' + error.toString());
     return false;
   }
 }
@@ -322,12 +332,12 @@ function getSubmissionCounts(ipAddress, email) {
   let emailCount = 0;
   
   if (lastRow > 1) {
-    const data = submissionsSheet.getRange(2, 1, lastRow - 1, 11).getValues();
+    const data = submissionsSheet.getRange(2, 1, lastRow - 1, 18).getValues();
     
     for (let i = 0; i < data.length; i++) {
       const row = data[i];
-      if (row[9] === ipAddress) ipCount++; // IP is column 10
-      if (row[7] === email) emailCount++; // Email is column 8
+      if (row[14] === ipAddress) ipCount++; // IP is column 15
+      if (row[12] === email) emailCount++; // Email is column 13
     }
   }
   
@@ -396,9 +406,14 @@ function doPost(e) {
       'Pending',  // Status
       data.petName || '',
       data.petType || '',
+      data.petBreed || '',
+      data.petAge || '',
       data.ownerName || '',
       data.storyTitle || '',
+      data.storyCategory || '',
       data.storyText || '',
+      data.treatmentDate || '',
+      data.outcome || '',
       email,
       data.photoUrl || '',
       ipAddress,
@@ -418,7 +433,7 @@ function doPost(e) {
       try {
         sendNotificationEmail(data, ipAddress, counts);
       } catch (emailError) {
-        Logger.log('Email notification error: ' + emailError.toString());
+        //Logger.log('Email notification error: ' + emailError.toString());
         // Don't fail the submission if email fails
       }
     }
@@ -433,7 +448,7 @@ function doPost(e) {
       
   } catch (error) {
     // Send error response
-    Logger.log('Error: ' + error.toString());
+    //Logger.log('Error: ' + error.toString());
     return ContentService
       .createTextOutput(JSON.stringify({
         'status': 'error',
@@ -444,15 +459,98 @@ function doPost(e) {
 }
 
 /**
- * Handle GET requests (for testing)
+ * Handle GET requests - Serve the HTML form
  */
 function doGet(e) {
-  return ContentService
-    .createTextOutput(JSON.stringify({
-      'status': 'success',
-      'message': 'Story submission endpoint is working! Use POST to submit stories.'
-    }))
-    .setMimeType(ContentService.MimeType.JSON);
+  try {
+    return HtmlService.createHtmlOutputFromFile('Form')
+      .setTitle('Share Your Success Story - Dr. Deepa Pet Vet Clinic')
+      .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL)
+      .setSandboxMode(HtmlService.SandboxMode.IFRAME);
+  } catch (error) {
+    return HtmlService.createHtmlOutput('<h1>Error loading form</h1><p>' + error.toString() + '</p>');
+  }
+}
+
+/**
+ * Submit story from HTML form
+ * Called by google.script.run from Form.html
+ */
+function submitStory(formData) {
+  try {
+    // Get IP address (not available in HTML service, so we'll use 'Web Form')
+    const ipAddress = 'Web Form Submission';
+    const email = formData.email || '';
+    
+    // Check rate limiting
+    const rateLimitCheck = checkRateLimit(ipAddress, email);
+    if (!rateLimitCheck.allowed) {
+      throw new Error(rateLimitCheck.reason);
+    }
+    
+    // Get the spreadsheet and submissions sheet
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    let sheet = ss.getSheetByName(SHEET_NAME);
+    
+    // If sheet doesn't exist, create it
+    if (!sheet) {
+      setup();
+      sheet = ss.getSheetByName(SHEET_NAME);
+    }
+    
+    // Get submission counts
+    const counts = getSubmissionCounts(ipAddress, email);
+    
+    // Prepare the row data
+    const timestamp = new Date();
+    const userAgent = 'Google Apps Script Web Form';
+    
+    const rowData = [
+      timestamp,
+      'Pending',  // Status
+      formData.petName || '',
+      formData.petType || '',
+      formData.petBreed || '',
+      formData.petAge || '',
+      formData.ownerName || '',
+      formData.storyTitle || '',
+      formData.storyCategory || '',
+      formData.storyText || '',
+      formData.treatmentDate || '',
+      formData.outcome || '',
+      email,
+      '', // Photo URL (sent separately via email)
+      ipAddress,
+      userAgent,
+      counts.ipCount + 1,  // Submission count for this IP
+      counts.emailCount + 1  // Submission count for this email
+    ];
+    
+    // Append the data to the sheet
+    sheet.appendRow(rowData);
+    
+    // Update rate limiting counters
+    updateRateLimit(ipAddress, email);
+    
+    // Send email notification if enabled
+    if (ENABLE_EMAIL_NOTIFICATIONS && NOTIFICATION_EMAIL && NOTIFICATION_EMAIL !== 'your-email@example.com') {
+      try {
+        sendNotificationEmail(formData, ipAddress, counts);
+      } catch (emailError) {
+        //Logger.log('Email notification error: ' + emailError.toString());
+        // Don't fail the submission if email fails
+      }
+    }
+    
+    return {
+      status: 'success',
+      message: 'Thank you for sharing your story! We will review it and publish it soon.'
+    };
+    
+  } catch (error) {
+    //Logger.log('Error in submitStory: ' + error.toString());
+    throw new Error('Sorry, there was an error submitting your story. Please try again later.');
+  }
 }
 
 /**
@@ -465,12 +563,12 @@ function approveStory(rowNumber) {
   const approvedSheet = ss.getSheetByName(APPROVED_SHEET_NAME);
   
   if (!submissionsSheet || !approvedSheet) {
-    Logger.log('Error: Required sheets not found. Run setup() first.');
+    //Logger.log('Error: Required sheets not found. Run setup() first.');
     return;
   }
   
   // Get the story data from submissions sheet
-  const storyData = submissionsSheet.getRange(rowNumber, 1, 1, 11).getValues()[0];
+  const storyData = submissionsSheet.getRange(rowNumber, 1, 1, 18).getValues()[0];
   
   // Update status to "Approved" in submissions sheet
   submissionsSheet.getRange(rowNumber, 2).setValue('Approved');
@@ -484,17 +582,22 @@ function approveStory(rowNumber) {
     nextId,                    // ID
     storyData[2],              // Pet Name
     storyData[3],              // Pet Type
-    storyData[4],              // Owner Name
-    storyData[5],              // Story Title
-    storyData[6],              // Story Text
-    storyData[8],              // Photo URL
+    storyData[4],              // Pet Breed
+    storyData[5],              // Pet Age
+    storyData[6],              // Owner Name
+    storyData[7],              // Story Title
+    storyData[8],              // Story Category
+    storyData[9],              // Story Text
+    storyData[10],             // Treatment Date
+    storyData[11],             // Outcome
+    storyData[13],             // Photo URL
     new Date()                 // Date Approved
   ];
   
   // Add to approved sheet
   approvedSheet.appendRow(approvedData);
   
-  Logger.log('Story approved and added to approved stories sheet.');
+  //Logger.log('Story approved and added to approved stories sheet.');
 }
 
 /**
@@ -506,14 +609,14 @@ function rejectStory(rowNumber) {
   const submissionsSheet = ss.getSheetByName(SHEET_NAME);
   
   if (!submissionsSheet) {
-    Logger.log('Error: Submissions sheet not found. Run setup() first.');
+    //Logger.log('Error: Submissions sheet not found. Run setup() first.');
     return;
   }
   
   // Update status to "Rejected"
   submissionsSheet.getRange(rowNumber, 2).setValue('Rejected');
   
-  Logger.log('Story rejected.');
+  //Logger.log('Story rejected.');
 }
 
 /**
@@ -525,39 +628,44 @@ function exportApprovedStoriesToJSON() {
   const approvedSheet = ss.getSheetByName(APPROVED_SHEET_NAME);
   
   if (!approvedSheet) {
-    Logger.log('Error: Approved stories sheet not found. Run setup() first.');
+    //Logger.log('Error: Approved stories sheet not found. Run setup() first.');
     return;
   }
   
   const lastRow = approvedSheet.getLastRow();
   if (lastRow <= 1) {
-    Logger.log('No approved stories to export.');
+    //Logger.log('No approved stories to export.');
     return;
   }
   
   // Get all approved stories (skip header row)
-  const data = approvedSheet.getRange(2, 1, lastRow - 1, 8).getValues();
+  const data = approvedSheet.getRange(2, 1, lastRow - 1, 13).getValues();
   
   // Convert to JSON format
   const stories = data.map(row => ({
     id: row[0],
     petName: row[1],
     petType: row[2].toLowerCase(),
-    ownerName: row[3],
-    title: row[4],
-    story: row[5],
-    image: row[6] || 'images/quiz/dog/golden-retriever.jpg',
-    date: Utilities.formatDate(row[7], Session.getScriptTimeZone(), 'yyyy-MM-dd')
+    breed: row[3],
+    age: row[4],
+    ownerName: row[5],
+    title: row[6],
+    category: row[7],
+    story: row[8],
+    treatmentDate: row[9] ? Utilities.formatDate(row[9], Session.getScriptTimeZone(), 'yyyy-MM-dd') : '',
+    outcome: row[10],
+    image: row[11] || 'images/quiz/dog/golden-retriever.jpg',
+    date: Utilities.formatDate(row[12], Session.getScriptTimeZone(), 'yyyy-MM-dd')
   }));
   
   // Create formatted JSON
   const json = JSON.stringify(stories, null, 2);
   
   // Log the JSON (you can copy this from the logs)
-  Logger.log('=== APPROVED STORIES JSON ===');
-  Logger.log(json);
-  Logger.log('=== END JSON ===');
-  Logger.log('Copy the JSON above and paste it into data/stories.json');
+  //Logger.log('=== APPROVED STORIES JSON ===');
+  //Logger.log(json);
+  //Logger.log('=== END JSON ===');
+  //Logger.log('Copy the JSON above and paste it into data/stories.json');
   
   return json;
 }
@@ -624,6 +732,16 @@ function sendNotificationEmail(data, ipAddress, counts) {
             </div>
             
             <div class="field">
+              <div class="label">🐾 Pet Breed:</div>
+              <div class="value">${data.petBreed || 'Not provided'}</div>
+            </div>
+            
+            <div class="field">
+              <div class="label">📅 Pet Age:</div>
+              <div class="value">${data.petAge || 'Not provided'}</div>
+            </div>
+            
+            <div class="field">
               <div class="label">👤 Owner Name:</div>
               <div class="value">${data.ownerName || 'Not provided'}</div>
             </div>
@@ -639,8 +757,23 @@ function sendNotificationEmail(data, ipAddress, counts) {
             </div>
             
             <div class="field">
+              <div class="label">🏷️ Category:</div>
+              <div class="value">${data.storyCategory || 'Not provided'}</div>
+            </div>
+            
+            <div class="field">
               <div class="label">📖 Story:</div>
               <div class="value story">${data.storyText || 'Not provided'}</div>
+            </div>
+            
+            <div class="field">
+              <div class="label">🏥 Treatment Date:</div>
+              <div class="value">${data.treatmentDate || 'Not provided'}</div>
+            </div>
+            
+            <div class="field">
+              <div class="label">✅ Outcome:</div>
+              <div class="value">${data.outcome || 'Not provided'}</div>
             </div>
             
             ${data.photoUrl ? `
@@ -683,14 +816,20 @@ Pet Details:
 ------------
 Pet Name: ${data.petName || 'Not provided'}
 Pet Type: ${data.petType || 'Not provided'}
+Pet Breed: ${data.petBreed || 'Not provided'}
+Pet Age: ${data.petAge || 'Not provided'}
 Owner Name: ${data.ownerName || 'Not provided'}
 Email: ${data.email || 'Not provided'}
 
 Story:
 ------
 Title: ${data.storyTitle || 'Not provided'}
+Category: ${data.storyCategory || 'Not provided'}
 
 ${data.storyText || 'Not provided'}
+
+Treatment Date: ${data.treatmentDate || 'Not provided'}
+Outcome: ${data.outcome || 'Not provided'}
 
 ${data.photoUrl ? 'Photo URL: ' + data.photoUrl : ''}
 
@@ -713,9 +852,9 @@ Dr. Deepa Pet Vet Clinic - Story Submission System
       body: plainBody,
       htmlBody: htmlBody
     });
-    Logger.log('Email notification sent successfully to: ' + NOTIFICATION_EMAIL);
+    //Logger.log('Email notification sent successfully to: ' + NOTIFICATION_EMAIL);
   } catch (error) {
-    Logger.log('Failed to send email notification: ' + error.toString());
+    //Logger.log('Failed to send email notification: ' + error.toString());
     throw error;
   }
 }

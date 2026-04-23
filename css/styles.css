@@ -406,8 +406,8 @@ ul {
 
 /* Hero Quotes Section */
 .hero-quotes {
-    margin-top: var(--spacing-lg);
-    margin-bottom: var(--spacing-lg);
+    margin-top: var(--spacing-sm);
+    margin-bottom: var(--spacing-sm);
     animation: fadeInUp 1s ease 1s backwards;
 }
 
@@ -1459,7 +1459,7 @@ ul {
 
 .info-card {
     background: var(--white);
-    padding: var(--spacing-md);
+    padding: var(--spacing-xs);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-sm);
     text-align: center;
@@ -1468,18 +1468,18 @@ ul {
 .info-card i {
     font-size: 2.5rem;
     color: var(--primary-color);
-    margin-bottom: var(--spacing-sm);
+    margin-bottom: var(--spacing-xs);
 }
 
 .info-card h3 {
     font-size: 1.25rem;
-    margin-bottom: var(--spacing-sm);
+    margin-bottom: var(--spacing-xs);
     color: var(--dark-color);
 }
 
 .info-card p {
     color: var(--gray);
-    line-height: 1.8;
+    line-height: 1.5;
 }
 
 .social-links {
@@ -1548,7 +1548,7 @@ ul {
    Pet Breed Quiz Section
    =================================== */
 .breed-quiz {
-    padding: var(--spacing-xl) 0;
+    padding: var(--spacing-sm) 0;
     background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
 }
 
@@ -1604,7 +1604,7 @@ ul {
     height: 400px;
     border-radius: var(--radius-lg);
     overflow: hidden;
-    margin-bottom: var(--spacing-md);
+    margin-bottom: var(--spacing-sm);
     box-shadow: var(--shadow-md);
 }
 
@@ -1668,7 +1668,7 @@ ul {
 
 .quiz-result {
     text-align: center;
-    padding: var(--spacing-lg);
+    padding: var(--spacing-sm);
     background: var(--light-color);
     border-radius: var(--radius-lg);
 }
@@ -2024,7 +2024,7 @@ ul {
     }
     
     .hero-content {
-        padding-top: 2rem;
+        padding-top: .5rem;
     }
     
     .hero-title {

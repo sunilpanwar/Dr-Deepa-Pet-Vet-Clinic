@@ -5,15 +5,8 @@ class QuotesLoader {
         this.currentQuoteIndex = 0;
         this.rotationInterval = null;
         
-        // Configure your JSON source here:
-        // Option 1: Local file (requires local server)
-        //this.jsonUrl = 'data/quotes.json';
-        
-        // Option 2: GitHub raw URL (works without local server!)
-         this.jsonUrl = 'https://gist.githubusercontent.com/sunilpanwar/606de5450c58d75a0415e220f510e0b5/raw/b79a7dfca9a511ed41694a61c280569c7d37856c/quotes.json';
-        
-        // Option 3: Google Drive public link (convert to direct download link)
-        // this.jsonUrl = 'https://drive.google.com/uc?export=download&id=YOUR_FILE_ID';
+        // Get JSON URL from config
+        this.jsonUrl = window.CONFIG?.QUOTES_JSON_URL || 'data/quotes.json';
         
         this.quoteText = document.getElementById('quoteText');
         this.quoteAuthor = document.getElementById('quoteAuthor');
@@ -22,11 +15,11 @@ class QuotesLoader {
     }
 
     async init() {
-        console.log('QuotesLoader: Initializing...');
+        //console.log('QuotesLoader: Initializing...');
         await this.loadQuotes();
         if (this.quotes.length > 0) {
             this.startQuoteRotation();
-            console.log(`QuotesLoader: Loaded ${this.quotes.length} quotes`);
+            //console.log(`QuotesLoader: Loaded ${this.quotes.length} quotes`);
         } else {
             console.warn('QuotesLoader: No quotes loaded');
         }
@@ -34,16 +27,15 @@ class QuotesLoader {
 
     async loadQuotes() {
         try {
-            console.log(`QuotesLoader: Fetching ${this.jsonUrl}...`);
+            //console.log(`QuotesLoader: Fetching ${this.jsonUrl}...`);
             const response = await fetch(this.jsonUrl);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             this.quotes = await response.json();
-            console.log('QuotesLoader: Successfully loaded quotes:', this.quotes);
+            //console.log('QuotesLoader: Successfully loaded quotes:', this.quotes);
         } catch (error) {
             console.error('QuotesLoader Error:', error);
-            console.error('Tip: Use GitHub or Google Drive URL to avoid needing a local server');
             // Fallback to empty array if loading fails
             this.quotes = [];
         }
@@ -77,7 +69,7 @@ class QuotesLoader {
 
     startQuoteRotation() {
         if (!this.quoteText || !this.quoteAuthor || this.quotes.length === 0) {
-            console.warn('QuotesLoader: Cannot start rotation - missing elements or quotes');
+            //console.warn('QuotesLoader: Cannot start rotation - missing elements or quotes');
             return;
         }
 
@@ -89,14 +81,14 @@ class QuotesLoader {
             this.rotateQuote();
         }, 15000);
         
-        console.log('QuotesLoader: Quote rotation started (15s interval)');
+        //console.log('QuotesLoader: Quote rotation started (15s interval)');
     }
 
     stopQuoteRotation() {
         if (this.rotationInterval) {
             clearInterval(this.rotationInterval);
             this.rotationInterval = null;
-            console.log('QuotesLoader: Quote rotation stopped');
+            //console.log('QuotesLoader: Quote rotation stopped');
         }
     }
 }

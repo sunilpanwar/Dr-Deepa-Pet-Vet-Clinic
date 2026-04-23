@@ -19,7 +19,7 @@
             // Then load footer
             await loadFooter();
             
-            console.log('✅ Header and Footer loaded successfully');
+            //console.log('✅ Header and Footer loaded successfully');
             
             // Trigger custom event to notify other scripts that components are ready
             window.dispatchEvent(new Event('componentsLoaded'));
@@ -191,5 +191,5 @@
         loadComponents();
     }
     
-    console.log('%c🔧 Components Loader Ready', 'color: #4A90E2; font-size: 14px; font-weight: bold;');
+    //console.log('%c🔧 Components Loader Ready', 'color: #4A90E2; font-size: 14px; font-weight: bold;');
 })();

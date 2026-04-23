@@ -5,14 +5,8 @@
 
 class StoriesLoader {
     constructor() {
-        // Configure JSON source - can be local file, GitHub, or Google Drive
-        //this.jsonUrl = 'data/stories.json';
-        
-        // For GitHub hosting (use this URL format when hosting online):
-        this.jsonUrl = 'https://gist.githubusercontent.com/sunilpanwar/3ab0d4f0c33a9d15450c1712f21c24d8/raw/fcfd33d7683b521a15759f3d49d69333a29b205e/stories.json';
-        
-        // For Google Drive (use direct download link):
-        // this.jsonUrl = 'https://drive.google.com/uc?export=download&id=YOUR-FILE-ID';
+        // Get JSON URL from config
+        this.jsonUrl = window.CONFIG?.STORIES_JSON_URL || 'data/stories.json';
         
         this.storiesGrid = document.getElementById('storiesGrid');
         this.stories = [];
@@ -21,7 +15,7 @@ class StoriesLoader {
     }
     
     async init() {
-        console.log('📖 Loading success stories...');
+        //console.log('📖 Loading success stories...');
         await this.loadStories();
     }
     
@@ -34,7 +28,7 @@ class StoriesLoader {
             }
             
             this.stories = await response.json();
-            console.log(`✅ Loaded ${this.stories.length} stories successfully`);
+            //console.log(`✅ Loaded ${this.stories.length} stories successfully`);
             
             this.renderStories();
             
@@ -59,7 +53,7 @@ class StoriesLoader {
             this.storiesGrid.appendChild(storyCard);
         });
         
-        console.log(`✅ Rendered ${this.stories.length} story cards`);
+        //console.log(`✅ Rendered ${this.stories.length} story cards`);
     }
     
     createStoryCard(story) {
@@ -137,4 +131,4 @@ document.addEventListener('DOMContentLoaded', () => {
     window.storiesLoader = new StoriesLoader();
 });
 
-console.log('%c📖 Stories Loader Ready', 'color: #4A90E2; font-size: 14px; font-weight: bold;');
+//console.log('%c📖 Stories Loader Ready', 'color: #4A90E2; font-size: 14px; font-weight: bold;');

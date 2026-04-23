@@ -33,17 +33,21 @@ if (mobileMenuToggle) {
 // ===================================
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-            const headerOffset = 80;
-            const elementPosition = target.getBoundingClientRect().top;
-            const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+        // Only prevent default for internal anchor links, not external links
+        const href = this.getAttribute('href');
+        if (href && href.startsWith('#') && href.length > 1) {
+            const target = document.querySelector(href);
+            if (target) {
+                e.preventDefault();
+                const headerOffset = 80;
+                const elementPosition = target.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
 
-            window.scrollTo({
-                top: offsetPosition,
-                behavior: 'smooth'
-            });
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth'
+                });
+            }
         }
     });
 });
@@ -201,7 +205,7 @@ if (appointmentForm) {
             appointmentForm.reset();
             
             // In a real application, you would send this data to a server
-            console.log('Appointment Data:', data);
+            //console.log('Appointment Data:', data);
         } else {
             showNotification('Please fill in all required fields correctly.', 'error');
         }
@@ -559,6 +563,6 @@ function updateStoriesCounter() {
 // ===================================
 // Console Welcome Message
 // ===================================
-console.log('%c🐾 Dr. Deepa Pet Vet Clinic', 'color: #4A90E2; font-size: 24px; font-weight: bold;');
-console.log('%cWebsite loaded successfully!', 'color: #50C878; font-size: 14px;');
-console.log('%cFor appointments, call: +91 98765 43210', 'color: #7F8C8D; font-size: 12px;');
+//console.log('%c🐾 Dr. Deepa Pet Vet Clinic', 'color: #4A90E2; font-size: 24px; font-weight: bold;');
+//console.log('%cWebsite loaded successfully!', 'color: #50C878; font-size: 14px;');
+//console.log('%cFor appointments, call: +91 98765 43210', 'color: #7F8C8D; font-size: 12px;');

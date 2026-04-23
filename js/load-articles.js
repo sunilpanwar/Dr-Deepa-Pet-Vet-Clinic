@@ -9,7 +9,9 @@ class ArticlesLoader {
         this.filteredArticles = [];
         this.currentFilter = 'all';
         this.searchQuery = '';
-        this.jsonUrl = 'https://gist.githubusercontent.com/sunilpanwar/fa4e354dc34faf45136f9eed89d07c7c/raw/d3f24571647fdf34dfd2a05960579a667f6cce42/articles.json';
+        
+        // Get JSON URL from config
+        this.jsonUrl = window.CONFIG?.ARTICLES_JSON_URL || 'data/articles.json';
     }
 
     async init() {
@@ -31,7 +33,7 @@ class ArticlesLoader {
             }
             this.articles = await response.json();
             this.filteredArticles = [...this.articles];
-            console.log(`Loaded ${this.articles.length} articles successfully`);
+            //console.log(`Loaded ${this.articles.length} articles successfully`);
         } catch (error) {
             console.error('Error loading articles:', error);
             throw error;

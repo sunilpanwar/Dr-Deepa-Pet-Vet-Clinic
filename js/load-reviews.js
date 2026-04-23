@@ -2,24 +2,19 @@
 class ReviewsLoader {
     constructor() {
         this.reviews = [];
-        // Configure your JSON source here:
-        // Option 1: Local file (requires local server)
-        //this.jsonUrl = 'data/reviews.json';
         
-        // Option 2: GitHub raw URL (works without local server!)
-        this.jsonUrl ='https://gist.githubusercontent.com/sunilpanwar/215ab7f9c7a11a8bd14028cab010b474/raw/60ce26465bea5ad9e1bc3d0fefb72dd6ba962bbd/reviews.json';
-        // Option 3: Google Drive public link (convert to direct download link)
-        // this.jsonUrl = 'https://drive.google.com/uc?export=download&id=YOUR_FILE_ID';
+        // Get JSON URL from config
+        this.jsonUrl = window.CONFIG?.REVIEWS_JSON_URL || 'data/reviews.json';
         
         this.init();
     }
 
     async init() {
-        console.log('ReviewsLoader: Initializing...');
+        //console.log('ReviewsLoader: Initializing...');
         await this.loadReviews();
         if (this.reviews.length > 0) {
             this.renderReviews();
-            console.log(`ReviewsLoader: Loaded ${this.reviews.length} reviews`);
+            //console.log(`ReviewsLoader: Loaded ${this.reviews.length} reviews`);
         } else {
             console.warn('ReviewsLoader: No reviews loaded');
         }
@@ -27,16 +22,15 @@ class ReviewsLoader {
 
     async loadReviews() {
         try {
-            console.log(`ReviewsLoader: Fetching ${this.jsonUrl}...`);
+            //console.log(`ReviewsLoader: Fetching ${this.jsonUrl}...`);
             const response = await fetch(this.jsonUrl);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             this.reviews = await response.json();
-            console.log('ReviewsLoader: Successfully loaded reviews:', this.reviews);
+            //console.log('ReviewsLoader: Successfully loaded reviews:', this.reviews);
         } catch (error) {
             console.error('ReviewsLoader Error:', error);
-            console.error('Tip: Use GitHub or Google Drive URL to avoid needing a local server');
             // Fallback to empty array if loading fails
             this.reviews = [];
         }
@@ -51,7 +45,7 @@ class ReviewsLoader {
 
         // Clear existing reviews
         testimonialsGrid.innerHTML = '';
-        console.log('ReviewsLoader: Rendering reviews...');
+        //console.log('ReviewsLoader: Rendering reviews...');
 
         // Render each review
         this.reviews.forEach(review => {
@@ -59,13 +53,13 @@ class ReviewsLoader {
             testimonialsGrid.appendChild(card);
         });
 
-        console.log(`ReviewsLoader: Rendered ${this.reviews.length} review cards`);
+        //console.log(`ReviewsLoader: Rendered ${this.reviews.length} review cards`);
 
         // Trigger carousel initialization after reviews are loaded
         // Wait a bit for DOM to update
         setTimeout(() => {
             if (window.TestimonialsCarousel) {
-                console.log('ReviewsLoader: Initializing carousel...');
+                //console.log('ReviewsLoader: Initializing carousel...');
                 new window.TestimonialsCarousel();
             }
         }, 100);
