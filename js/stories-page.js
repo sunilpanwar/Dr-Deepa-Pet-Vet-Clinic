@@ -266,5 +266,5 @@ function addPageButton(pageNum, container) {
 // ===================================
 // Console Message
 // ===================================
-console.log('%c📖 Success Stories Page Loaded', 'color: #4A90E2; font-size: 16px; font-weight: bold;');
-console.log('%cFiltering and pagination active!', 'color: #50C878; font-size: 12px;');
+//console.log('%c📖 Success Stories Page Loaded', 'color: #4A90E2; font-size: 16px; font-weight: bold;');
+//console.log('%cFiltering and pagination active!', 'color: #50C878; font-size: 12px;');

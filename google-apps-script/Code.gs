@@ -119,8 +119,8 @@ function setup() {
   rateLimitSheet.getRange(1, 1, 1, rateLimitHeaders.length).setFontWeight('bold');
   rateLimitSheet.setFrozenRows(1);
   
-  Logger.log('Setup complete! All sheets created with headers.');
-  Logger.log('Remember to update NOTIFICATION_EMAIL and RECAPTCHA_SECRET_KEY in the configuration!');
+  //Logger.log('Setup complete! All sheets created with headers.');
+  //Logger.log('Remember to update NOTIFICATION_EMAIL and RECAPTCHA_SECRET_KEY in the configuration!');
 }
 
 // ===================================
@@ -138,7 +138,7 @@ function verifyRecaptcha(token) {
   }
   
   if (!token) {
-    Logger.log('reCAPTCHA: No token provided');
+    //Logger.log('reCAPTCHA: No token provided');
     return false;
   }
   
@@ -157,11 +157,11 @@ function verifyRecaptcha(token) {
     const response = UrlFetchApp.fetch(url, options);
     const result = JSON.parse(response.getContentText());
     
-    Logger.log('reCAPTCHA verification result: ' + result.success);
+    //Logger.log('reCAPTCHA verification result: ' + result.success);
     return result.success === true;
     
   } catch (error) {
-    Logger.log('reCAPTCHA verification error: ' + error.toString());
+    //Logger.log('reCAPTCHA verification error: ' + error.toString());
     return false;
   }
 }
@@ -433,7 +433,7 @@ function doPost(e) {
       try {
         sendNotificationEmail(data, ipAddress, counts);
       } catch (emailError) {
-        Logger.log('Email notification error: ' + emailError.toString());
+        //Logger.log('Email notification error: ' + emailError.toString());
         // Don't fail the submission if email fails
       }
     }
@@ -448,7 +448,7 @@ function doPost(e) {
       
   } catch (error) {
     // Send error response
-    Logger.log('Error: ' + error.toString());
+    //Logger.log('Error: ' + error.toString());
     return ContentService
       .createTextOutput(JSON.stringify({
         'status': 'error',
@@ -537,7 +537,7 @@ function submitStory(formData) {
       try {
         sendNotificationEmail(formData, ipAddress, counts);
       } catch (emailError) {
-        Logger.log('Email notification error: ' + emailError.toString());
+        //Logger.log('Email notification error: ' + emailError.toString());
         // Don't fail the submission if email fails
       }
     }
@@ -548,7 +548,7 @@ function submitStory(formData) {
     };
     
   } catch (error) {
-    Logger.log('Error in submitStory: ' + error.toString());
+    //Logger.log('Error in submitStory: ' + error.toString());
     throw new Error('Sorry, there was an error submitting your story. Please try again later.');
   }
 }
@@ -563,7 +563,7 @@ function approveStory(rowNumber) {
   const approvedSheet = ss.getSheetByName(APPROVED_SHEET_NAME);
   
   if (!submissionsSheet || !approvedSheet) {
-    Logger.log('Error: Required sheets not found. Run setup() first.');
+    //Logger.log('Error: Required sheets not found. Run setup() first.');
     return;
   }
   
@@ -597,7 +597,7 @@ function approveStory(rowNumber) {
   // Add to approved sheet
   approvedSheet.appendRow(approvedData);
   
-  Logger.log('Story approved and added to approved stories sheet.');
+  //Logger.log('Story approved and added to approved stories sheet.');
 }
 
 /**
@@ -609,14 +609,14 @@ function rejectStory(rowNumber) {
   const submissionsSheet = ss.getSheetByName(SHEET_NAME);
   
   if (!submissionsSheet) {
-    Logger.log('Error: Submissions sheet not found. Run setup() first.');
+    //Logger.log('Error: Submissions sheet not found. Run setup() first.');
     return;
   }
   
   // Update status to "Rejected"
   submissionsSheet.getRange(rowNumber, 2).setValue('Rejected');
   
-  Logger.log('Story rejected.');
+  //Logger.log('Story rejected.');
 }
 
 /**
@@ -628,13 +628,13 @@ function exportApprovedStoriesToJSON() {
   const approvedSheet = ss.getSheetByName(APPROVED_SHEET_NAME);
   
   if (!approvedSheet) {
-    Logger.log('Error: Approved stories sheet not found. Run setup() first.');
+    //Logger.log('Error: Approved stories sheet not found. Run setup() first.');
     return;
   }
   
   const lastRow = approvedSheet.getLastRow();
   if (lastRow <= 1) {
-    Logger.log('No approved stories to export.');
+    //Logger.log('No approved stories to export.');
     return;
   }
   
@@ -662,10 +662,10 @@ function exportApprovedStoriesToJSON() {
   const json = JSON.stringify(stories, null, 2);
   
   // Log the JSON (you can copy this from the logs)
-  Logger.log('=== APPROVED STORIES JSON ===');
-  Logger.log(json);
-  Logger.log('=== END JSON ===');
-  Logger.log('Copy the JSON above and paste it into data/stories.json');
+  //Logger.log('=== APPROVED STORIES JSON ===');
+  //Logger.log(json);
+  //Logger.log('=== END JSON ===');
+  //Logger.log('Copy the JSON above and paste it into data/stories.json');
   
   return json;
 }
@@ -852,9 +852,9 @@ Dr. Deepa Pet Vet Clinic - Story Submission System
       body: plainBody,
       htmlBody: htmlBody
     });
-    Logger.log('Email notification sent successfully to: ' + NOTIFICATION_EMAIL);
+    //Logger.log('Email notification sent successfully to: ' + NOTIFICATION_EMAIL);
   } catch (error) {
-    Logger.log('Failed to send email notification: ' + error.toString());
+    //Logger.log('Failed to send email notification: ' + error.toString());
     throw error;
   }
 }

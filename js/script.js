@@ -205,7 +205,7 @@ if (appointmentForm) {
             appointmentForm.reset();
             
             // In a real application, you would send this data to a server
-            console.log('Appointment Data:', data);
+            //console.log('Appointment Data:', data);
         } else {
             showNotification('Please fill in all required fields correctly.', 'error');
         }
@@ -563,6 +563,6 @@ function updateStoriesCounter() {
 // ===================================
 // Console Welcome Message
 // ===================================
-console.log('%c🐾 Dr. Deepa Pet Vet Clinic', 'color: #4A90E2; font-size: 24px; font-weight: bold;');
-console.log('%cWebsite loaded successfully!', 'color: #50C878; font-size: 14px;');
-console.log('%cFor appointments, call: +91 98765 43210', 'color: #7F8C8D; font-size: 12px;');
+//console.log('%c🐾 Dr. Deepa Pet Vet Clinic', 'color: #4A90E2; font-size: 24px; font-weight: bold;');
+//console.log('%cWebsite loaded successfully!', 'color: #50C878; font-size: 14px;');
+//console.log('%cFor appointments, call: +91 98765 43210', 'color: #7F8C8D; font-size: 12px;');
